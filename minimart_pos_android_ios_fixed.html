@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="my" data-theme="emerald">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MiniMart POS & Inventory Management System</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: 'var(--brand-50)',
+              100: 'var(--brand-100)',
+              500: 'var(--brand-500)',
+              600: 'var(--brand-600)',
+              700: 'var(--brand-700)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap');
+    
+    :root {
+      /* Default Emerald Theme */
+      --brand-50: #ecfdf5;
+      --brand-100: #d1fae5;
+      --brand-500: #10b981;
+      --brand-600: #059669;
+      --brand-700: #047857;
+      --brand-ring: rgba(16, 185, 129, 0.35);
+    }
+
+    [data-theme="indigo"] {
+      --brand-50: #eef2ff;
+      --brand-100: #e0e7ff;
+      --brand-500: #6366f1;
+      --brand-600: #4f46e5;
+      --brand-700: #4338ca;
+      --brand-ring: rgba(99, 102, 241, 0.35);
+    }
+
+    [data-theme="violet"] {
+      --brand-50: #f5f3ff;
+      --brand-100: #ede9fe;
+      --brand-500: #8b5cf6;
+      --brand-600: #7c3aed;
+      --brand-700: #6d28d9;
+      --brand-ring: rgba(139, 92, 246, 0.35);
+    }
+
+    [data-theme="rose"] {
+      --brand-50: #fff1f2;
+      --brand-100: #ffe4e6;
+      --brand-500: #f43f5e;
+      --brand-600: #e11d48;
+      --brand-700: #be123c;
+      --brand-ring: rgba(244, 63, 94, 0.35);
+    }
+
+    [data-theme="amber"] {
+      --brand-50: #fffbeb;
+      --brand-100: #fef3c7;
+      --brand-500: #f59e0b;
+      --brand-600: #d97706;
+      --brand-700: #b45309;
+      --brand-ring: rgba(245, 158, 11, 0.35);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Myanmar', system-ui, -apple-system, sans-serif;
+    }
+
+    /* Thermal Receipt Print Stylesheet */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printableThermalVoucher, #printableThermalVoucher * {
+        visibility: visible;
+      }
+      #printableThermalVoucher {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 78mm;
+        margin: 0;
+        padding: 5mm;
+        color: #000;
+        background: #fff;
+        font-family: monospace;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+  <!-- ========================================== -->
+  <!-- Top Global Navigation Bar & Customizer     -->
+  <!-- ========================================== -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20 font-bold text-xl text-white">
+          M
+        </div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-2">
+            <span>MiniMart POS</span>
+            <span id="roleBadge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20 font-semibold uppercase">Owner</span>
+          </h1>
+          <p class="text-[11px] text-slate-400" data-i18n="tagline">အရောင်းနှင့် စာရင်းကိုင် စီမံခန့်ခွဲမှုစနစ်</p>
+        </div>
+      </div>
+
+      <!-- Controls: Theme Color Selector & Language Switcher -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Theme Colors Switcher -->
+        <div class="flex items-center bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/80 gap-1.5" title="Theme Color ပြောင်းလဲရန်">
+          <button type="button" onclick="setTheme('emerald')" class="w-4 h-4 rounded-full bg-emerald-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-emerald-400" aria-label="Emerald Theme"></button>
+          <button type="button" onclick="setTheme('indigo')" class="w-4 h-4 rounded-full bg-indigo-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-indigo-400" aria-label="Indigo Theme"></button>
+          <button type="button" onclick="setTheme('violet')" class="w-4 h-4 rounded-full bg-purple-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-purple-400" aria-label="Violet Theme"></button>
+          <button type="button" onclick="setTheme('rose')" class="w-4 h-4 rounded-full bg-rose-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-rose-400" aria-label="Rose Theme"></button>
+          <button type="button" onclick="setTheme('amber')" class="w-4 h-4 rounded-full bg-amber-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-amber-400" aria-label="Amber Theme"></button>
+        </div>
+
+        <!-- Language Toggle (MM / EN) -->
+        <button id="langToggleBtn" type="button" class="px-2.5 py-1.5 rounded-xl border border-slate-700 hover:border-slate-600 bg-slate-800/90 hover:bg-slate-800 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 shadow-sm">
+          <span class="text-sm">🌐</span>
+          <span id="langLabel">မြန်မာ</span>
+        </button>
+
+        <!-- User Logout Button (Visible only when logged in) -->
+        <button id="topLogoutBtn" type="button" class="hidden px-2.5 py-1.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-semibold transition" data-i18n="logout">
+          ထွက်မည်
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- Main Content Container                     -->
+  <!-- ========================================== -->
+  <main class="flex-1 flex flex-col justify-center p-3 sm:p-6 max-w-7xl mx-auto w-full">
+
+    <!-- Global Alert / Notification Toast -->
+    <div id="alertBox" class="hidden mb-4 p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2.5 transition">
+      <svg id="alertIcon" class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+      <span id="alertMessage" class="flex-1 leading-relaxed"></span>
+      <button id="alertCloseBtn" class="text-slate-400 hover:text-white">&times;</button>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 1: SIMPLIFIED LOGIN CARD (NO GOOGLE SIGN-IN BTN) -->
+    <!-- ======================================================== -->
+    <div id="loginCard" class="w-full max-w-md mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 backdrop-blur relative">
+      
+      <!-- Top Icon & Header -->
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-500 mb-3">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight" data-i18n="loginTitle">ဆိုင်ရှင် အကောင့်ဝင်ရန်</h2>
+        <p class="text-xs text-slate-400 mt-1" data-i18n="loginSubtitle">Email နှင့် Password ဖြင့် လုံခြုံစွာ ဝင်ရောက်ပါ</p>
+      </div>
+
+      <!-- Pure Email & Password Form Only (Stripped of all unnecessary items) -->
+      <form id="ownerLoginForm" class="space-y-4">
+        <div>
+          <label for="loginEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5" data-i18n="emailLabel">
+            Email လိပ်စာ (သို့မဟုတ် Username)
+          </label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
+            </span>
+            <input type="email" id="loginEmail" required placeholder="owner@minimart.com" autocomplete="email" class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="loginPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-300" data-i18n="passwordLabel">
+              Password (လျှို့ဝှက်ကုဒ်)
+            </label>
+            <button type="button" id="openForgotModalBtn" class="text-xs text-brand-500 hover:text-brand-100 transition hover:underline" data-i18n="forgotPassword">
+              Password မေ့နေပါသလား?
+            </button>
+          </div>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </span>
+            <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password" class="w-full pl-9 pr-10 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
+            <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300" title="Password ပြရန်">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center text-xs text-slate-400">
+          <label class="flex items-center space-x-2 cursor-pointer select-none">
+            <input type="checkbox" id="rememberMe" checked class="rounded border-slate-700 bg-slate-950 text-brand-500 focus:ring-brand-500">
+            <span data-i18n="rememberMe">Login မှတ်ထားမည် (Remember Me)</span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submitLoginBtn" class="w-full py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 active:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition flex items-center justify-center gap-2">
+          <span id="submitSpinner" class="hidden">
+            <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+          </span>
+          <span id="submitText" data-i18n="signInBtn">အကောင့်ဝင်ရောက်မည်</span>
+        </button>
+      </form>
+
+      <!-- Note: Google Sign In Button Completely Removed as instructed -->
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SECTION 2: AUTHENTICATED POS & MANAGEMENT PORTAL         -->
+    <!-- ======================================================== -->
+    <div id="ownerPortalCard" class="hidden w-full space-y-5">
+      
+      <!-- Top Action Navigation Tabs -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 p-2 rounded-2xl border border-slate-800">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="switchTab('pos')" id="tabBtnPos" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2">
+            <span>🛒</span> <span data-i18n="tabPos">အရောင်းကောင်တာ (POS)</span>
+          </button>
+          <button type="button" onclick="switchTab('bulk')" id="tabBtnBulk" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+            <span>📦</span> <span data-i18n="tabBulk">ပစ္စည်းအများအပြား ထည့်သွင်းခြင်း (Bulk Add)</span>
+          </button>
+          <button type="button" onclick="switchTab('categories')" id="tabBtnCategories" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
+            <span>🏷️</span> <span data-i18n="tabCategories">Category စီမံခန့်ခွဲမှု</span>
+          </button>
+        </div>
+
+        <!-- Quick Status Indicator -->
+        <div class="flex items-center gap-2 text-xs text-slate-400 px-3">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="authenticatedEmail" class="font-mono text-slate-300">owner@minimart.com</span>
+        </div>
+      </div>
+
+      <!-- TAB 1: POS CHECKOUT SYSTEM & BARCODE SCANNER -->
+      <div id="viewPos" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- Left: Product List & Barcode Scanner Area (7 Cols) -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+          <div>
+            <!-- Barcode Scanner Search Input -->
+            <div class="mb-4">
+              <label for="barcodeScanInput" class="block text-xs font-semibold uppercase tracking-wider text-brand-500 mb-1.5 flex items-center justify-between">
+                <span data-i18n="barcodeScannerHeading">🔍 Barcode စကင်ဖတ်ရန် (သို့မဟုတ် ကုဒ်ရိုက်ထည့်ပါ)</span>
+                <span class="text-[10px] text-slate-400 font-normal">Press Enter after scan</span>
+              </label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                </span>
+                <input type="text" id="barcodeScanInput" placeholder="ဥပမာ: 885123456789 (Scan Barcode...)" autofocus class="w-full pl-11 pr-24 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
+                <button type="button" id="manualScanBtn" class="absolute inset-y-1.5 right-1.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition" data-i18n="scanAddBtn">
+                  ရှာမည်
+                </button>
+              </div>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="mb-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin" id="posCategoryFilters">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Product Grid -->
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[460px] overflow-y-auto pr-1">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Cart & Payment Checkout Section (5 Cols) -->
+        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h3 class="font-bold text-base text-white flex items-center gap-2">
+                <span>🛒</span> <span data-i18n="cartHeading">အရောင်းခြင်းတောင်း</span>
+              </h3>
+              <button type="button" onclick="clearCart()" class="text-xs text-red-400 hover:text-red-300 transition" data-i18n="clearCart">
+                ရှင်းထုတ်မည်
+              </button>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cartItemsContainer" class="divide-y divide-slate-800/80 max-h-[300px] overflow-y-auto my-3 pr-1">
+              <!-- Cart items rendered dynamically -->
+              <p class="text-center text-xs text-slate-500 py-8" data-i18n="cartEmpty">ခြင်းတောင်းထဲတွင် ပစ္စည်းမရှိသေးပါ</p>
+            </div>
+          </div>
+
+          <!-- Checkout & Calculation Area -->
+          <div class="pt-3 border-t border-slate-800 space-y-3">
+            <div class="flex justify-between items-center text-xs text-slate-400">
+              <span data-i18n="subtotal">စုစုပေါင်း ပစ္စည်းအရေအတွက်:</span>
+              <span id="cartTotalItems" class="font-semibold text-slate-200">0 ခု</span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span class="text-sm font-bold text-white" data-i18n="grandTotal">ကျသင့်ငွေ စုစုပေါင်း:</span>
+              <span id="cartGrandTotal" class="text-2xl font-black text-brand-500 font-mono">0 MMK</span>
+            </div>
+
+            <!-- Payment Method Selector (Cash or e-Pay) -->
+            <div class="pt-2">
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2" data-i18n="paymentMethod">
+                ငွေပေးချေမှုပုံစံ ရွေးချယ်ပါ
+              </label>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" onclick="selectPaymentMethod('cash')" id="payCashBtn" class="py-2.5 px-3 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                  <span>💵</span> <span data-i18n="payCash">ငွေသား (Cash)</span>
+                </button>
+                <button type="button" onclick="selectPaymentMethod('epay')" id="payEpayBtn" class="py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold transition flex items-center justify-center gap-1.5">
+                  <span>📱</span> <span data-i18n="payEpay">e-Pay (KPay/Wave)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Cash Input Field (Active when Cash is selected) -->
+            <div id="cashPaymentDetail" class="space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400" data-i18n="cashReceived">ပေးငွေ (Amount Tendered):</span>
+                <input type="number" id="cashReceivedInput" placeholder="0" class="w-32 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-right font-mono text-white text-xs focus:ring-1 focus:ring-brand-500">
+              </div>
+              <div class="flex items-center justify-between text-xs font-bold">
+                <span class="text-slate-400" data-i18n="cashChange">ပြန်အမ်းငွေ (Change):</span>
+                <span id="cashChangeDisplay" class="font-mono text-emerald-400">0 MMK</span>
+              </div>
+            </div>
+
+            <!-- e-Pay Detail (Active when e-Pay is selected) -->
+            <div id="epayPaymentDetail" class="hidden space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400" data-i18n="selectEwallet">Wallet ရွေးချယ်ပါ:</span>
+                <select id="ewalletType" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white">
+                  <option value="KBZPay">KBZPay (09-123456789)</option>
+                  <option value="WavePay">WavePay (09-987654321)</option>
+                  <option value="AYAPay">AYA Pay</option>
+                  <option value="CBPay">CB Pay</option>
+                </select>
+              </div>
+              <div>
+                <input type="text" id="epayTxnId" placeholder="Transaction ID (နောက်ဆုံး ၄ လုံး)" class="w-full px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
+              </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <button type="button" id="completeSaleBtn" onclick="checkoutOrder()" class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm shadow-xl shadow-brand-500/20 transition flex items-center justify-center gap-2">
+              <span>✓</span> <span data-i18n="checkoutBtn">ငွေရှင်းပြီး ဘောက်ချာထုတ်မည်</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TAB 2: BULK PRODUCTS ADDING SYSTEM -->
+      <div id="viewBulk" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <span>📦</span> <span data-i18n="bulkHeading">ပစ္စည်းအများအပြား တစ်ပြိုင်နက် ထည့်သွင်းခြင်း</span>
+            </h3>
+            <p class="text-xs text-slate-400" data-i18n="bulkSubtitle">အောက်ပါဇယားတွင် အတန်းများတိုး၍ ပစ္စည်းအများအပြားကို တစ်ကြိမ်တည်း ထည့်သွင်းသိမ်းဆည်းနိုင်ပါသည်။</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="addBulkRow()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-500 border border-brand-500/30 text-xs font-bold transition flex items-center gap-1.5">
+              <span>+</span> <span data-i18n="addAnotherRow">နောက်ထပ် ပစ္စည်းတစ်ခု ထပ်ထည့်ရန်</span>
+            </button>
+            <button type="button" onclick="saveAllBulkProducts()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow-lg shadow-brand-500/20 flex items-center gap-1.5">
+              <span>💾</span> <span data-i18n="saveAllProducts">အားလုံး သိမ်းဆည်းမည် (Save All)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Bulk Products Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 text-slate-400">
+                <th class="py-2.5 px-2 w-10 text-center">#</th>
+                <th class="py-2.5 px-2 min-w-[140px]" data-i18n="colBarcode">ဘားကုဒ် (Barcode)</th>
+                <th class="py-2.5 px-2 min-w-[180px]" data-i18n="colName">ပစ္စည်းအမည် (Name)</th>
+                <th class="py-2.5 px-2 min-w-[140px]" data-i18n="colCategory">အမျိုးအစား (Category)</th>
+                <th class="py-2.5 px-2 min-w-[110px]" data-i18n="colBuyPrice">ဝယ်ဈေး (Buy)</th>
+                <th class="py-2.5 px-2 min-w-[110px]" data-i18n="colSellPrice">ရောင်းဈေး (Sell)</th>
+                <th class="py-2.5 px-2 min-w-[90px]" data-i18n="colStock">Stock အရေအတွက်</th>
+                <th class="py-2.5 px-2 w-12 text-center" data-i18n="colAction">ဖျက်</th>
+              </tr>
+            </thead>
+            <tbody id="bulkTableBody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Rows added dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: CATEGORY MANAGEMENT & MINUS SYSTEM -->
+      <div id="viewCategories" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 space-y-6">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>🏷️</span> <span data-i18n="categoryHeading">Category စီမံခန့်ခွဲမှုနှင့် အသစ်ထည့်သွင်းခြင်း</span>
+          </h3>
+          <p class="text-xs text-slate-400" data-i18n="categorySubtitle">မလိုချင်တော့သော Categories များကို Minus (-) ခလုတ်နှိပ်၍ အလွယ်တကူ ဖယ်ရှားနိုင်ပါသည်။</p>
+        </div>
+
+        <!-- Add Category Form -->
+        <form id="addCategoryForm" class="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-950 p-3 rounded-2xl border border-slate-800">
+          <input type="text" id="newCategoryIcon" placeholder="Emoji (💄/🍲/🧃)" class="w-24 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-center focus:ring-1 focus:ring-brand-500">
+          <input type="text" id="newCategoryName" required placeholder="Category အမည် (ဥပမာ- အလှကုန်၊ ဖျော်ရည်...)" class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-1 focus:ring-brand-500">
+          <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md">
+            <span>+</span> <span data-i18n="addCategoryBtn">Category အသစ်ထည့်မည်</span>
+          </button>
+        </form>
+
+        <!-- Current Categories Grid with Minus (-) System -->
+        <div>
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3" data-i18n="activeCategoriesList">
+            လက်ရှိ Category များ စာရင်း
+          </h4>
+          <div id="categoriesListGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <!-- Categories rendered dynamically with minus buttons -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: RECEIPT & BLUETOOTH THERMAL PRINTER -->
+  <!-- ========================================== -->
+  <div id="receiptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="w-full max-w-sm bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="text-center">
+        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-xl mb-2">
+          ✓
+        </div>
+        <h3 class="font-bold text-base text-white" data-i18n="saleCompleted">အရောင်း အောင်မြင်ပါသည်!</h3>
+        <p class="text-xs text-slate-400" data-i18n="saleCompletedSub">Thermal Voucher ထုတ်ယူရန် Bluetooth Printer သို့ ပို့ဆောင်နိုင်ပါပြီ</p>
+      </div>
+
+      <!-- Preview Voucher Box -->
+      <div class="bg-white text-black p-4 rounded-xl font-mono text-xs leading-relaxed max-h-72 overflow-y-auto shadow-inner" id="voucherPreviewContent">
+        <!-- Receipt Text -->
+      </div>
+
+      <!-- Action Buttons (Bluetooth Print & Close) -->
+      <div class="space-y-2">
+        <button type="button" id="printBluetoothThermalBtn" onclick="printToBluetoothThermalPrinter()" class="w-full py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20 transition flex items-center justify-center gap-2">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span data-i18n="printBluetoothBtn">🖨️ Bluetooth Thermal Printer ဖြင့် ပရင့်ထုတ်မည်</span>
+        </button>
+
+        <button type="button" onclick="printStandardVoucher()" class="w-full py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition" data-i18n="printBrowserBtn">
+          📄 Browser Print (Voucher မူရင်း)
+        </button>
+
+        <button type="button" onclick="closeReceiptModal()" class="w-full py-2 text-center text-xs text-slate-400 hover:text-white transition" data-i18n="closeBtn">
+          ပိတ်မည်
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Container for Standard Window.print() thermal output -->
+  <div id="printableThermalVoucher" class="hidden"></div>
+
+  <!-- Password Reset Modal -->
+  <div id="forgotPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h3 class="font-bold text-base text-white" data-i18n="resetModalTitle">Password ပြန်လည်တောင်းယူရန်</h3>
+        <button type="button" onclick="closeForgotModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed" data-i18n="resetModalDesc">သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Password အသစ်သတ်မှတ်ရန် Link ပို့ပေးပါမည်။</p>
+      <form id="forgotPasswordForm" class="space-y-3">
+        <input type="email" id="resetEmail" required placeholder="owner@minimart.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:ring-1 focus:ring-brand-500">
+        <div id="modalAlertBox" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeForgotModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-xs text-slate-300" data-i18n="cancelBtn">မလုပ်တော့ပါ</button>
+          <button type="submit" id="sendResetBtn" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-bold" data-i18n="sendResetBtn">Link ပို့မည်</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-3 text-center text-xs text-slate-500">
+    MiniMart POS &copy; 2026 &middot; Firebase Modular Auth & Bluetooth Thermal ESC/POS Engine
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: APPLICATION STATE, THEMES, I18N, POS, BLUETOOTH & FIREBASE   -->
+  <!-- ========================================================================= -->
+  <script type="module">
+    // =========================================================================
+    // 1. FIREBASE AUTHENTICATION & FIRESTORE CORE (UNTOUCHED & PRESERVED)
+    // =========================================================================
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      sendPasswordResetEmail, 
+      signOut, 
+      onAuthStateChanged,
+      setPersistence,
+      browserLocalPersistence,
+      browserSessionPersistence
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      setDoc, 
+      serverTimestamp,
+      collection,
+      addDoc,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    // Original Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBLlMTLwJcdECtZR_whZG5B_QY_xKIMGJk",
+      authDomain: "mini-mark-2f4fa.firebaseapp.com",
+      projectId: "mini-mark-2f4fa",
+      storageBucket: "mini-mark-2f4fa.firebasestorage.app",
+      messagingSenderId: "628159874830",
+      appId: "1:628159874830:web:c284dcd6ca67616deb395f",
+      measurementId: "G-5EXZRQ0TJN"
+    };
+
+    let app, auth, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+    } catch (e) {
+      console.error("Firebase Init Error:", e);
+    }
+
+    // =========================================================================
+    // 2. MULTI-LANGUAGE SYSTEM (MYANMAR / ENGLISH)
+    // =========================================================================
+    let currentLang = localStorage.getItem("mm_pos_lang") || "my";
+
+    const translations = {
+      my: {
+        tagline: "အရောင်းနှင့် စာရင်းကိုင် စီမံခန့်ခွဲမှုစနစ်",
+        loginTitle: "ဆိုင်ရှင် အကောင့်ဝင်ရန်",
+        loginSubtitle: "Email နှင့် Password ဖြင့် လုံခြုံစွာ ဝင်ရောက်ပါ",
+        emailLabel: "Email လိပ်စာ (သို့မဟုတ် Username)",
+        passwordLabel: "Password (လျှို့ဝှက်ကုဒ်)",
+        forgotPassword: "Password မေ့နေပါသလား?",
+        rememberMe: "Login မှတ်ထားမည် (Remember Me)",
+        signInBtn: "အကောင့်ဝင်ရောက်မည်",
+        tabPos: "အရောင်းကောင်တာ (POS)",
+        tabBulk: "ပစ္စည်းအများအပြား ထည့်သွင်းခြင်း (Bulk Add)",
+        tabCategories: "Category စီမံခန့်ခွဲမှု",
+        barcodeScannerHeading: "🔍 Barcode စကင်ဖတ်ရန် (သို့မဟုတ် ကုဒ်ရိုက်ထည့်ပါ)",
+        scanAddBtn: "ရှာမည်",
+        cartHeading: "အရောင်းခြင်းတောင်း",
+        clearCart: "ရှင်းထုတ်မည်",
+        cartEmpty: "ခြင်းတောင်းထဲတွင် ပစ္စည်းမရှိသေးပါ",
+        subtotal: "စုစုပေါင်း ပစ္စည်းအရေအတွက်:",
+        grandTotal: "ကျသင့်ငွေ စုစုပေါင်း:",
+        paymentMethod: "ငွေပေးချေမှုပုံစံ ရွေးချယ်ပါ",
+        payCash: "ငွေသား (Cash)",
+        payEpay: "e-Pay (KPay/Wave)",
+        cashReceived: "ပေးငွေ (Amount Tendered):",
+        cashChange: "ပြန်အမ်းငွေ (Change):",
+        selectEwallet: "Wallet ရွေးချယ်ပါ:",
+        checkoutBtn: "ငွေရှင်းပြီး ဘောက်ချာထုတ်မည်",
+        bulkHeading: "ပစ္စည်းအများအပြား တစ်ပြိုင်နက် ထည့်သွင်းခြင်း",
+        bulkSubtitle: "အောက်ပါဇယားတွင် အတန်းများတိုး၍ ပစ္စည်းအများအပြားကို တစ်ကြိမ်တည်း ထည့်သွင်းသိမ်းဆည်းနိုင်ပါသည်။",
+        addAnotherRow: "နောက်ထပ် ပစ္စည်းတစ်ခု ထပ်ထည့်ရန်",
+        saveAllProducts: "အားလုံး သိမ်းဆည်းမည် (Save All)",
+        colBarcode: "ဘားကုဒ် (Barcode)",
+        colName: "ပစ္စည်းအမည် (Name)",
+        colCategory: "အမျိုးအစား (Category)",
+        colBuyPrice: "ဝယ်ဈေး (Buy)",
+        colSellPrice: "ရောင်းဈေး (Sell)",
+        colStock: "Stock အရေအတွက်",
+        colAction: "ဖျက်",
+        categoryHeading: "Category စီမံခန့်ခွဲမှုနှင့် အသစ်ထည့်သွင်းခြင်း",
+        categorySubtitle: "မလိုချင်တော့သော Categories များကို Minus (-) ခလုတ်နှိပ်၍ အလွယ်တကူ ဖယ်ရှားနိုင်ပါသည်။",
+        addCategoryBtn: "Category အသစ်ထည့်မည်",
+        activeCategoriesList: "လက်ရှိ Category များ စာရင်း",
+        saleCompleted: "အရောင်း အောင်မြင်ပါသည်!",
+        saleCompletedSub: "Thermal Voucher ထုတ်ယူရန် Bluetooth Printer သို့ ပို့ဆောင်နိုင်ပါပြီ",
+        printBluetoothBtn: "🖨️ Bluetooth Thermal Printer ဖြင့် ပရင့်ထုတ်မည်",
+        printBrowserBtn: "📄 Browser Print (Voucher မူရင်း)",
+        closeBtn: "ပိတ်မည်",
+        resetModalTitle: "Password ပြန်လည်တောင်းယူရန်",
+        resetModalDesc: "သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Password အသစ်သတ်မှတ်ရန် Link ပို့ပေးပါမည်။",
+        cancelBtn: "မလုပ်တော့ပါ",
+        sendResetBtn: "Link ပို့မည်",
+        logout: "ထွက်မည်"
+      },
+      en: {
+        tagline: "Retail Sales & Inventory Management System",
+        loginTitle: "Owner Portal Sign In",
+        loginSubtitle: "Sign in securely with Email and Password",
+        emailLabel: "Email Address (or Username)",
+        passwordLabel: "Password",
+        forgotPassword: "Forgot Password?",
+        rememberMe: "Remember Me",
+        signInBtn: "Sign In",
+        tabPos: "Point of Sale (POS)",
+        tabBulk: "Bulk Products Add",
+        tabCategories: "Categories Management",
+        barcodeScannerHeading: "🔍 Scan Barcode (or Enter Code)",
+        scanAddBtn: "Search",
+        cartHeading: "Current Cart",
+        clearCart: "Clear Cart",
+        cartEmpty: "No items in cart",
+        subtotal: "Total Quantity:",
+        grandTotal: "Grand Total:",
+        paymentMethod: "Select Payment Method",
+        payCash: "Cash",
+        payEpay: "e-Pay (KPay/Wave)",
+        cashReceived: "Amount Tendered:",
+        cashChange: "Change Due:",
+        selectEwallet: "Choose Wallet:",
+        checkoutBtn: "Checkout & Print Voucher",
+        bulkHeading: "Bulk Products Quick Entry",
+        bulkSubtitle: "Add multiple rows below to batch upload inventory items simultaneously.",
+        addAnotherRow: "Add Another Row",
+        saveAllProducts: "Save All Products",
+        colBarcode: "Barcode",
+        colName: "Product Name",
+        colCategory: "Category",
+        colBuyPrice: "Buy Price",
+        colSellPrice: "Sell Price",
+        colStock: "Stock Qty",
+        colAction: "Del",
+        categoryHeading: "Categories & Minus (-) System",
+        categorySubtitle: "Easily remove unwanted categories by clicking the Minus (-) button.",
+        addCategoryBtn: "Add Category",
+        activeCategoriesList: "Active Categories",
+        saleCompleted: "Sale Completed Successfully!",
+        saleCompletedSub: "Ready to print thermal receipt to Bluetooth printer",
+        printBluetoothBtn: "🖨️ Print via Bluetooth Thermal Printer",
+        printBrowserBtn: "📄 Browser Print Dialog",
+        closeBtn: "Close",
+        resetModalTitle: "Reset Password",
+        resetModalDesc: "Enter your registered email to receive a password reset link.",
+        cancelBtn: "Cancel",
+        sendResetBtn: "Send Reset Link",
+        logout: "Log Out"
+      }
+    };
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("mm_pos_lang", lang);
+      document.getElementById("langLabel").textContent = lang === "my" ? "မြန်မာ" : "English";
+      
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+      renderPosCategoryFilters();
+    }
+
+    document.getElementById("langToggleBtn").addEventListener("click", () => {
+      applyLanguage(currentLang === "my" ? "en" : "my");
+    });
+
+    // =========================================================================
+    // 3. THEME COLOR SWITCHER
+    // =========================================================================
+    window.setTheme = function(themeName) {
+      document.documentElement.setAttribute("data-theme", themeName);
+      localStorage.setItem("mm_pos_theme", themeName);
+    };
+    const savedTheme = localStorage.getItem("mm_pos_theme") || "emerald";
+    window.setTheme(savedTheme);
+
+    // =========================================================================
+    // 4. CATEGORIES STATE & MINUS (-) SYSTEM
+    // =========================================================================
+    let categories = JSON.parse(localStorage.getItem("mm_pos_categories")) || [
+      { id: "c1", icon: "💄", name: "အလှကုန် (Cosmetics)" },
+      { id: "c2", icon: "🍲", name: "အစားအသောက် (Food)" },
+      { id: "c3", icon: "🧃", name: "ဖျော်ရည် (Beverages)" },
+      { id: "c4", icon: "🧴", name: "လူသုံးကုန် (Household)" },
+      { id: "c5", icon: "💊", name: "ဆေးဝါး (Medicine)" }
+    ];
+    let selectedCategoryFilter = "all";
+
+    function saveCategories() {
+      localStorage.setItem("mm_pos_categories", JSON.stringify(categories));
+      renderCategoriesList();
+      renderPosCategoryFilters();
+    }
+
+    window.removeCategory = function(catId) {
+      categories = categories.filter(c => c.id !== catId);
+      saveCategories();
+      showAlert("Category ကို အောင်မြင်စွာ ဖယ်ရှားလိုက်ပါပြီ။", "success");
+    };
+
+    document.getElementById("addCategoryForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const icon = document.getElementById("newCategoryIcon").value.trim() || "🏷️";
+      const name = document.getElementById("newCategoryName").value.trim();
+      if (!name) return;
+
+      const newId = "c_" + Date.now();
+      categories.push({ id: newId, icon, name });
+      saveCategories();
+      document.getElementById("newCategoryIcon").value = "";
+      document.getElementById("newCategoryName").value = "";
+      showAlert(`Category "${name}" ကို အောင်မြင်စွာ ထည့်သွင်းပြီးပါပြီ။`, "success");
+    });
+
+    function renderCategoriesList() {
+      const container = document.getElementById("categoriesListGrid");
+      container.innerHTML = "";
+      categories.forEach(cat => {
+        const div = document.createElement("div");
+        div.className = "flex items-center justify-between p-3 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition";
+        div.innerHTML = `
+          <div class="flex items-center space-x-2.5 truncate">
+            <span class="text-xl">${cat.icon}</span>
+            <span class="text-xs font-semibold text-white truncate">${cat.name}</span>
+          </div>
+          <!-- Minus (-) Remove Button -->
+          <button type="button" onclick="removeCategory('${cat.id}')" title="ဖယ်ရှားရန်" class="w-7 h-7 flex-shrink-0 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white flex items-center justify-center font-bold text-sm transition">
+            &minus;
+          </button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderPosCategoryFilters() {
+      const filterBox = document.getElementById("posCategoryFilters");
+      const allText = currentLang === "my" ? "အားလုံး (All)" : "All Items";
+      filterBox.innerHTML = `
+        <button type="button" onclick="filterByCategory('all')" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${selectedCategoryFilter === 'all' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
+          ${allText}
+        </button>
+      `;
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.onclick = () => filterByCategory(cat.id);
+        const isActive = selectedCategoryFilter === cat.id;
+        btn.className = `px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition flex items-center gap-1.5 ${isActive ? 'bg-brand-600 text-white font-bold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
+        btn.innerHTML = `<span>${cat.icon}</span> <span>${cat.name}</span>`;
+        filterBox.appendChild(btn);
+      });
+    }
+
+    window.filterByCategory = function(catId) {
+      selectedCategoryFilter = catId;
+      renderPosCategoryFilters();
+      renderProductGrid();
+    };
+
+    // =========================================================================
+    // 5. PRODUCTS & BULK PRODUCTS ADDING SYSTEM
+    // =========================================================================
+    let products = JSON.parse(localStorage.getItem("mm_pos_products")) || [
+      { barcode: "885012345601", name: "Sunscreen SPF50+ 50ml", categoryId: "c1", buyPrice: 12000, sellPrice: 15500, stock: 45 },
+      { barcode: "885012345602", name: "Lipstick Matte Red", categoryId: "c1", buyPrice: 4500, sellPrice: 6500, stock: 30 },
+      { barcode: "885012345603", name: "Instant Noodle Spicy", categoryId: "c2", buyPrice: 1100, sellPrice: 1400, stock: 120 },
+      { barcode: "885012345604", name: "Orange Juice Fresh 250ml", categoryId: "c3", buyPrice: 1800, sellPrice: 2300, stock: 60 }
+    ];
+
+    function saveProducts() {
+      localStorage.setItem("mm_pos_products", JSON.stringify(products));
+      renderProductGrid();
+    }
+
+    let bulkRowsCounter = 0;
+    window.addBulkRow = function() {
+      bulkRowsCounter++;
+      const tbody = document.getElementById("bulkTableBody");
+      const tr = document.createElement("tr");
+      tr.id = `bulkRow_${bulkRowsCounter}`;
+      tr.className = "hover:bg-slate-800/40 transition";
+
+      // Options for categories
+      let catOptions = `<option value="">(Select Category)</option>`;
+      categories.forEach(c => {
+        catOptions += `<option value="${c.id}">${c.icon} ${c.name}</option>`;
+      });
+
+      // Default sample barcode generator
+      const randomBarcode = "885" + Math.floor(100000000 + Math.random() * 900000000);
+
+      tr.innerHTML = `
+        <td class="py-2 px-2 text-center text-slate-500">${bulkRowsCounter}</td>
+        <td class="py-2 px-2">
+          <input type="text" class="b-barcode w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white" value="${randomBarcode}" placeholder="Barcode">
+        </td>
+        <td class="py-2 px-2">
+          <input type="text" class="b-name w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white" placeholder="ပစ္စည်းအမည်">
+        </td>
+        <td class="py-2 px-2">
+          <select class="b-cat w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
+            ${catOptions}
+          </select>
+        </td>
+        <td class="py-2 px-2">
+          <input type="number" class="b-buy w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white text-right" placeholder="0">
+        </td>
+        <td class="py-2 px-2">
+          <input type="number" class="b-sell w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white text-right" placeholder="0">
+        </td>
+        <td class="py-2 px-2">
+          <input type="number" class="b-stock w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white text-right" value="10">
+        </td>
+        <td class="py-2 px-2 text-center">
+          <button type="button" onclick="removeBulkRow('${tr.id}')" class="text-red-400 hover:text-red-200 font-bold">&times;</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    };
+
+    window.removeBulkRow = function(rowId) {
+      const el = document.getElementById(rowId);
+      if (el) el.remove();
+    };
+
+    // Save All Bulk Products into State & Firestore Database
+    window.saveAllBulkProducts = async function() {
+      const rows = document.querySelectorAll("#bulkTableBody tr");
+      if (rows.length === 0) {
+        showAlert("ထည့်သွင်းရန် ပစ္စည်းစာရင်း မရှိသေးပါ။ '+ နောက်ထပ် ပစ္စည်းတစ်ခု ထပ်ထည့်ရန်' ကို နှိပ်ပါ။", "warning");
+        return;
+      }
+
+      let newItems = [];
+      let hasError = false;
+
+      rows.forEach(r => {
+        const barcode = r.querySelector(".b-barcode").value.trim();
+        const name = r.querySelector(".b-name").value.trim();
+        const cat = r.querySelector(".b-cat").value;
+        const buy = parseFloat(r.querySelector(".b-buy").value) || 0;
+        const sell = parseFloat(r.querySelector(".b-sell").value) || 0;
+        const stock = parseInt(r.querySelector(".b-stock").value) || 0;
+
+        if (!barcode || !name) {
+          hasError = true;
+          return;
+        }
+
+        newItems.push({
+          barcode,
+          name,
+          categoryId: cat,
+          buyPrice: buy,
+          sellPrice: sell,
+          stock,
+          createdAt: new Date().toISOString()
+        });
+      });
+
+      if (hasError || newItems.length === 0) {
+        showAlert("Barcode နှင့် ကုန်ပစ္စည်းအမည် အားလုံး ဖြည့်သွင်းပေးပါ။", "warning");
+        return;
+      }
+
+      // Merge into local products list
+      newItems.forEach(item => {
+        const idx = products.findIndex(p => p.barcode === item.barcode);
+        if (idx >= 0) {
+          products[idx] = item;
+        } else {
+          products.unshift(item);
+        }
+      });
+      saveProducts();
+
+      // Attempt Firestore synchronization if authenticated
+      if (auth.currentUser && db) {
+        try {
+          const colRef = collection(db, "products");
+          for (const item of newItems) {
+            await addDoc(colRef, {
+              ...item,
+              ownerUid: auth.currentUser.uid,
+              timestamp: serverTimestamp()
+            });
+          }
+        } catch (dbErr) {
+          console.warn("Firestore sync optional note:", dbErr);
+        }
+      }
+
+      document.getElementById("bulkTableBody").innerHTML = "";
+      bulkRowsCounter = 0;
+      showAlert(`ပစ္စည်း ${newItems.length} မျိုးကို Database ထဲသို့ အောင်မြင်စွာ သိမ်းဆည်းလိုက်ပါပြီ!`, "success");
+      switchTab('pos');
+    };
+
+    // =========================================================================
+    // 6. POS CART, AUDIO BEEP & BARCODE SCANNER
+    // =========================================================================
+    let cart = [];
+    let selectedPayment = "cash";
+
+    // Audio Beep Generator for Barcode Scans (Web Audio API)
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // 1200Hz pleasant beep
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {
+        // AudioContext not allowed or muted
+      }
+    }
+
+    function renderProductGrid() {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+
+      const filtered = selectedCategoryFilter === "all" 
+        ? products 
+        : products.filter(p => p.categoryId === selectedCategoryFilter);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full py-10 text-center text-xs text-slate-500">ဤ Category တွင် ကုန်ပစ္စည်းမရှိသေးပါ</div>`;
+        return;
+      }
+
+      filtered.forEach(p => {
+        const cat = categories.find(c => c.id === p.categoryId);
+        const card = document.createElement("div");
+        card.className = "bg-slate-950 border border-slate-800 hover:border-brand-500/60 rounded-2xl p-3 flex flex-col justify-between cursor-pointer transition hover:scale-[1.02] shadow-sm";
+        card.onclick = () => addProductToCart(p.barcode);
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+              <span>${cat ? cat.icon : '📦'}</span>
+              <span class="font-mono text-slate-500">${p.barcode.slice(-4)}</span>
+            </div>
+            <p class="font-bold text-xs text-white line-clamp-2 leading-snug">${p.name}</p>
+          </div>
+          <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
+            <span class="text-xs font-black text-brand-500 font-mono">${p.sellPrice.toLocaleString()} K</span>
+            <span class="text-[10px] text-slate-400">Stock: ${p.stock}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Barcode Scan Action (Hardware Scanner / Enter key trigger)
+    const barcodeInput = document.getElementById("barcodeScanInput");
+    barcodeInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleBarcodeSubmit();
+      }
+    });
+    document.getElementById("manualScanBtn").addEventListener("click", handleBarcodeSubmit);
+
+    function handleBarcodeSubmit() {
+      const code = barcodeInput.value.trim();
+      if (!code) return;
+      
+      const found = products.find(p => p.barcode === code || p.barcode.endsWith(code));
+      if (found) {
+        addProductToCart(found.barcode);
+        barcodeInput.value = "";
+        barcodeInput.focus();
+      } else {
+        showAlert(`Barcode "${code}" နှင့် ကိုက်ညီသော ပစ္စည်းမတွေ့ရှိပါ။`, "warning");
+      }
+    }
+
+    window.addProductToCart = function(barcode) {
+      const p = products.find(x => x.barcode === barcode);
+      if (!p) return;
+
+      playBeepSound();
+      const existing = cart.find(c => c.barcode === barcode);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({
+          barcode: p.barcode,
+          name: p.name,
+          price: p.sellPrice,
+          qty: 1
+        });
+      }
+      renderCart();
+    };
+
+    window.updateCartQty = function(barcode, delta) {
+      const item = cart.find(c => c.barcode === barcode);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(c => c.barcode !== barcode);
+      }
+      renderCart();
+    };
+
+    window.clearCart = function() {
+      cart = [];
+      renderCart();
+    };
+
+    function renderCart() {
+      const container = document.getElementById("cartItemsContainer");
+      if (cart.length === 0) {
+        container.innerHTML = `<p class="text-center text-xs text-slate-500 py-8" data-i18n="cartEmpty">${translations[currentLang].cartEmpty}</p>`;
+        document.getElementById("cartTotalItems").textContent = "0 ခု";
+        document.getElementById("cartGrandTotal").textContent = "0 MMK";
+        updateCashCalculations(0);
+        return;
+      }
+
+      container.innerHTML = "";
+      let totalQty = 0;
+      let grandTotal = 0;
+
+      cart.forEach(item => {
+        const itemTotal = item.price * item.qty;
+        totalQty += item.qty;
+        grandTotal += itemTotal;
+
+        const row = document.createElement("div");
+        row.className = "py-2.5 flex items-center justify-between text-xs";
+        row.innerHTML = `
+          <div class="flex-1 pr-2 truncate">
+            <p class="font-semibold text-white truncate">${item.name}</p>
+            <p class="text-[11px] text-slate-400 font-mono">${item.price.toLocaleString()} K &times; ${item.qty} = <span class="text-brand-500 font-bold">${itemTotal.toLocaleString()} K</span></p>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <button type="button" onclick="updateCartQty('${item.barcode}', -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold text-xs">-</button>
+            <span class="w-7 text-center font-bold text-white">${item.qty}</span>
+            <button type="button" onclick="updateCartQty('${item.barcode}', 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold text-xs">+</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      document.getElementById("cartTotalItems").textContent = `${totalQty} ခု`;
+      document.getElementById("cartGrandTotal").textContent = `${grandTotal.toLocaleString()} MMK`;
+      updateCashCalculations(grandTotal);
+    }
+
+    // Payment Methods Logic
+    window.selectPaymentMethod = function(method) {
+      selectedPayment = method;
+      const cashBtn = document.getElementById("payCashBtn");
+      const epayBtn = document.getElementById("payEpayBtn");
+      const cashSection = document.getElementById("cashPaymentDetail");
+      const epaySection = document.getElementById("epayPaymentDetail");
+
+      if (method === "cash") {
+        cashBtn.className = "py-2.5 px-3 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold transition flex items-center justify-center gap-1.5";
+        epayBtn.className = "py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold transition flex items-center justify-center gap-1.5";
+        cashSection.classList.remove("hidden");
+        epaySection.classList.add("hidden");
+      } else {
+        epayBtn.className = "py-2.5 px-3 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold transition flex items-center justify-center gap-1.5";
+        cashBtn.className = "py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold transition flex items-center justify-center gap-1.5";
+        cashSection.classList.add("hidden");
+        epaySection.classList.remove("hidden");
+      }
+    };
+
+    const cashInput = document.getElementById("cashReceivedInput");
+    cashInput.addEventListener("input", () => {
+      const grandTotal = cart.reduce((acc, cur) => acc + (cur.price * cur.qty), 0);
+      updateCashCalculations(grandTotal);
+    });
+
+    function updateCashCalculations(grandTotal) {
+      const tendered = parseFloat(cashInput.value) || 0;
+      const change = Math.max(0, tendered - grandTotal);
+      document.getElementById("cashChangeDisplay").textContent = `${change.toLocaleString()} MMK`;
+    }
+
+    // =========================================================================
+    // 7. CHECKOUT & BLUETOOTH THERMAL PRINTER (ESC/POS COMMANDS)
+    // =========================================================================
+    let lastOrderVoucher = null;
+
+    window.checkoutOrder = function() {
+      if (cart.length === 0) {
+        showAlert("ကျေးဇူးပြု၍ စျေးခြင်းတောင်းထဲသို့ ကုန်ပစ္စည်း အရင်ထည့်သွင်းပါ။", "warning");
+        return;
+      }
+
+      const grandTotal = cart.reduce((acc, cur) => acc + (cur.price * cur.qty), 0);
+      const tendered = selectedPayment === "cash" ? (parseFloat(cashInput.value) || grandTotal) : grandTotal;
+      const change = Math.max(0, tendered - grandTotal);
+      const ewalletName = document.getElementById("ewalletType").value;
+      const txnId = document.getElementById("epayTxnId").value.trim() || "N/A";
+
+      lastOrderVoucher = {
+        voucherNo: "INV-" + Date.now().toString().slice(-6),
+        date: new Date().toLocaleString(),
+        items: [...cart],
+        grandTotal,
+        paymentMethod: selectedPayment === "cash" ? "Cash (ငွေသား)" : `e-Pay (${ewalletName})`,
+        tendered,
+        change,
+        txnId
+      };
+
+      // Deduct local stocks
+      cart.forEach(c => {
+        const prod = products.find(p => p.barcode === c.barcode);
+        if (prod) prod.stock = Math.max(0, prod.stock - c.qty);
+      });
+      saveProducts();
+
+      // Show Voucher Preview Modal
+      renderVoucherPreview(lastOrderVoucher);
+      document.getElementById("receiptModal").classList.remove("hidden");
+      clearCart();
+      cashInput.value = "";
+    };
+
+    function renderVoucherPreview(v) {
+      let itemsListText = "";
+      v.items.forEach(it => {
+        itemsListText += `
+          <div class="flex justify-between py-0.5">
+            <span class="truncate pr-1">${it.name} &times; ${it.qty}</span>
+            <span>${(it.price * it.qty).toLocaleString()} K</span>
+          </div>
+        `;
+      });
+
+      const voucherHtml = `
+        <div class="text-center pb-2 border-b border-black">
+          <p class="font-bold text-sm">MINIMART POS</p>
+          <p class="text-[10px]">ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှုစနစ်</p>
+          <p class="text-[10px]">No: ${v.voucherNo} | ${v.date}</p>
+        </div>
+        <div class="py-2 border-b border-black space-y-1">
+          ${itemsListText}
+        </div>
+        <div class="py-2 space-y-1 text-right">
+          <div class="flex justify-between font-bold">
+            <span>စုစုပေါင်း (TOTAL):</span>
+            <span>${v.grandTotal.toLocaleString()} MMK</span>
+          </div>
+          <div class="flex justify-between text-[11px]">
+            <span>ငွေပေးချေမှု:</span>
+            <span>${v.paymentMethod}</span>
+          </div>
+          ${v.paymentMethod.startsWith("Cash") ? `
+            <div class="flex justify-between text-[11px]">
+              <span>ပေးငွေ:</span>
+              <span>${v.tendered.toLocaleString()} MMK</span>
+            </div>
+            <div class="flex justify-between text-[11px] font-bold">
+              <span>ပြန်အမ်းငွေ:</span>
+              <span>${v.change.toLocaleString()} MMK</span>
+            </div>
+          ` : `
+            <div class="flex justify-between text-[11px]">
+              <span>Txn ID:</span>
+              <span>${v.txnId}</span>
+            </div>
+          `}
+        </div>
+        <div class="text-center pt-2 border-t border-black text-[10px]">
+          <p>ဝယ်ယူအားပေးမှုကို ကျေးဇူးတင်ပါသည်!</p>
+          <p>Please Come Again</p>
+        </div>
+      `;
+
+      document.getElementById("voucherPreviewContent").innerHTML = voucherHtml;
+      document.getElementById("printableThermalVoucher").innerHTML = voucherHtml;
+    }
+
+    // Web Bluetooth API Thermal Printer Routine (ESC/POS)
+    window.printToBluetoothThermalPrinter = async function() {
+      if (!lastOrderVoucher) return;
+
+      if (!navigator.bluetooth) {
+        showAlert("ဤ Browser တွင် Web Bluetooth API ကို အထောက်အပံ့မပေးသေးပါ (Chrome/Edge သုံးပါ)။ Browser Print ဖြင့် ထုတ်ပေးပါမည်။", "warning");
+        window.print();
+        return;
+      }
+
+      showAlert("Bluetooth Thermal Printer ကို ချိတ်ဆက်ရှာဖွေနေပါသည်...", "warning");
+
+      try {
+        // Request Bluetooth Device with ESC/POS standard service or broad UUIDs
+        const device = await navigator.bluetooth.requestDevice({
+          filters: [
+            { services: ['000018f0-0000-1000-8000-00805f9b34fb'] },
+            { services: ['e7810a71-73ae-499d-8c15-faa9aef0c3f2'] }
+          ],
+          optionalServices: [
+            '000018f0-0000-1000-8000-00805f9b34fb',
+            'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+            '49535343-fe7d-4ae5-8fa9-9fafd205e455'
+          ]
+        }).catch(async () => {
+          // Fallback to accept all bluetooth devices if service filter misses
+          return await navigator.bluetooth.requestDevice({
+            acceptAllDevices: true,
+            optionalServices: [
+              '000018f0-0000-1000-8000-00805f9b34fb',
+              'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
+              '49535343-fe7d-4ae5-8fa9-9fafd205e455'
+            ]
+          });
+        });
+
+        if (!device) return;
+
+        const server = await device.gatt.connect();
+        
+        // Locate writable characteristic
+        let targetCharacteristic = null;
+        const services = await server.getPrimaryServices();
+        for (const service of services) {
+          const characteristics = await service.getCharacteristics();
+          for (const char of characteristics) {
+            if (char.properties.write || char.properties.writeWithoutResponse) {
+              targetCharacteristic = char;
+              break;
+            }
+          }
+          if (targetCharacteristic) break;
+        }
+
+        if (!targetCharacteristic) {
+          throw new Error("Printer ထံသို့ Data ရေးသားနိုင်သော Bluetooth Characteristic ရှာမတွေ့ပါ။");
+        }
+
+        // Generate ESC/POS Binary Buffer
+        const encoder = new TextEncoder();
+        const ESC = 0x1B;
+        const GS = 0x1D;
+
+        const initPrinter = new Uint8Array([ESC, 0x40]); // ESC @ (Initialize)
+        const centerAlign = new Uint8Array([ESC, 0x61, 0x01]); // Center
+        const leftAlign = new Uint8Array([ESC, 0x61, 0x00]); // Left
+        const cutPaper = new Uint8Array([GS, 0x56, 0x41, 0x10]); // Cut paper
+
+        let receiptRaw = `MINIMART POS\nOwner System\n`;
+        receiptRaw += `No: ${lastOrderVoucher.voucherNo}\nDate: ${lastOrderVoucher.date}\n`;
+        receiptRaw += `--------------------------------\n`;
+        lastOrderVoucher.items.forEach(it => {
+          receiptRaw += `${it.name.slice(0, 18)} x${it.qty}  ${it.price * it.qty}K\n`;
+        });
+        receiptRaw += `--------------------------------\n`;
+        receiptRaw += `TOTAL: ${lastOrderVoucher.grandTotal.toLocaleString()} MMK\n`;
+        receiptRaw += `PAY: ${lastOrderVoucher.paymentMethod}\n`;
+        receiptRaw += `--------------------------------\n`;
+        receiptRaw += `Thank You! Please Come Again\n\n\n`;
+
+        // Send Chunks to Thermal Printer
+        await targetCharacteristic.writeValue(initPrinter);
+        await targetCharacteristic.writeValue(centerAlign);
+        await targetCharacteristic.writeValue(encoder.encode(receiptRaw));
+        await targetCharacteristic.writeValue(cutPaper);
+
+        showAlert("Bluetooth Thermal Printer ဖြင့် Voucher ထုတ်ယူပြီးပါပြီ!", "success");
+      } catch (printErr) {
+        console.error("Bluetooth Thermal Print Error:", printErr);
+        showAlert("Bluetooth printer ချိတ်ဆက်မှု မအောင်မြင်ပါ (" + printErr.message + ")။ Browser Print ဖွင့်ပေးပါမည်။", "warning");
+        window.print();
+      }
+    };
+
+    window.printStandardVoucher = function() {
+      window.print();
+    };
+
+    window.closeReceiptModal = function() {
+      document.getElementById("receiptModal").classList.add("hidden");
+    };
+
+    // =========================================================================
+    // 8. TABS & UI HELPERS
+    // =========================================================================
+    window.switchTab = function(tabName) {
+      const vPos = document.getElementById("viewPos");
+      const vBulk = document.getElementById("viewBulk");
+      const vCat = document.getElementById("viewCategories");
+
+      const bPos = document.getElementById("tabBtnPos");
+      const bBulk = document.getElementById("tabBtnBulk");
+      const bCat = document.getElementById("tabBtnCategories");
+
+      [vPos, vBulk, vCat].forEach(el => el.classList.add("hidden"));
+      [bPos, bBulk, bCat].forEach(btn => {
+        btn.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2";
+      });
+
+      if (tabName === "pos") {
+        vPos.classList.remove("hidden");
+        bPos.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2";
+        barcodeInput.focus();
+      } else if (tabName === "bulk") {
+        vBulk.classList.remove("hidden");
+        bBulk.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2";
+        if (document.querySelectorAll("#bulkTableBody tr").length === 0) {
+          addBulkRow();
+          addBulkRow();
+          addBulkRow();
+        }
+      } else if (tabName === "categories") {
+        vCat.classList.remove("hidden");
+        bCat.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2";
+      }
+    };
+
+    // Alert helpers
+    const alertBox = document.getElementById("alertBox");
+    const alertMessage = document.getElementById("alertMessage");
+    const alertIcon = document.getElementById("alertIcon");
+    document.getElementById("alertCloseBtn").addEventListener("click", () => alertBox.classList.add("hidden"));
+
+    function showAlert(msg, type = "error") {
+      alertBox.classList.remove("hidden", "bg-red-950/80", "border-red-600/60", "text-red-200", "bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200", "bg-amber-950/80", "border-amber-600/60", "text-amber-200");
+      alertBox.classList.add("border");
+      
+      if (type === "error") {
+        alertBox.classList.add("bg-red-950/80", "border-red-600/60", "text-red-200");
+        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+      } else if (type === "success") {
+        alertBox.classList.add("bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200");
+        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>`;
+      } else {
+        alertBox.classList.add("bg-amber-950/80", "border-amber-600/60", "text-amber-200");
+        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>`;
+      }
+      alertMessage.textContent = msg;
+    }
+
+    // Toggle Password Visibility
+    document.getElementById("togglePasswordBtn").addEventListener("click", () => {
+      const pwd = document.getElementById("loginPassword");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+    });
+
+    // Forgot Password Modal
+    window.closeForgotModal = () => document.getElementById("forgotPasswordModal").classList.add("hidden");
+    document.getElementById("openForgotModalBtn").addEventListener("click", () => {
+      document.getElementById("forgotPasswordModal").classList.remove("hidden");
+      document.getElementById("resetEmail").value = document.getElementById("loginEmail").value.trim();
+    });
+
+    document.getElementById("forgotPasswordForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("resetEmail").value.trim();
+      const modalAlert = document.getElementById("modalAlertBox");
+      modalAlert.classList.add("hidden");
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        modalAlert.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-emerald-950/80 border border-emerald-600 text-emerald-200 block";
+        modalAlert.textContent = `${email} ထံသို့ Password reset link ပို့ပြီးပါပြီ။ Inbox ကို စစ်ဆေးပါ။`;
+      } catch (err) {
+        modalAlert.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-red-950/80 border border-red-600 text-red-200 block";
+        modalAlert.textContent = err.message;
+      }
+    });
+
+    // =========================================================================
+    // 9. ORIGINAL FIREBASE AUTHENTICATION HANDLERS
+    // =========================================================================
+    const loginCard = document.getElementById("loginCard");
+    const ownerPortalCard = document.getElementById("ownerPortalCard");
+    const roleBadge = document.getElementById("roleBadge");
+    const topLogoutBtn = document.getElementById("topLogoutBtn");
+    const authenticatedEmail = document.getElementById("authenticatedEmail");
+
+    document.getElementById("ownerLoginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const remember = document.getElementById("rememberMe").checked;
+
+      if (!email || !password) return;
+
+      const submitBtn = document.getElementById("submitLoginBtn");
+      const spinner = document.getElementById("submitSpinner");
+      const text = document.getElementById("submitText");
+      submitBtn.disabled = true;
+      spinner.classList.remove("hidden");
+      text.textContent = "စစ်ဆေးနေပါသည်...";
+
+      try {
+        const persistence = remember ? browserLocalPersistence : browserSessionPersistence;
+        await setPersistence(auth, persistence);
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        await verifyAndHandleOwnerRole(cred.user);
+      } catch (err) {
+        showAlert(err.message || "Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။", "error");
+      } finally {
+        submitBtn.disabled = false;
+        spinner.classList.add("hidden");
+        text.textContent = translations[currentLang].signInBtn;
+      }
+    });
+
+    async function verifyAndHandleOwnerRole(user) {
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userDocRef);
+
+        let isOwner = false;
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.role === "owner" || data.role === "admin") {
+            isOwner = true;
+          } else {
+            await signOut(auth);
+            showAlert("ဤအကောင့်သည် ဆိုင်ရှင် (Owner) ခွင့်ပြုချက်မရှိပါ။", "error");
+            return;
+          }
+        } else {
+          // Auto initialize first user as owner
+          await setDoc(userDocRef, {
+            email: user.email,
+            role: "owner",
+            displayName: user.displayName || "MiniMart Owner",
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp()
+          });
+          isOwner = true;
+        }
+
+        if (isOwner) {
+          loginCard.classList.add("hidden");
+          ownerPortalCard.classList.remove("hidden");
+          roleBadge.classList.remove("hidden");
+          topLogoutBtn.classList.remove("hidden");
+          authenticatedEmail.textContent = user.email;
+          showAlert("ဆိုင်ရှင်အကောင့်ဖြင့် အောင်မြင်စွာ ဝင်ရောက်ပြီးပါပြီ။", "success");
+        }
+      } catch (err) {
+        console.warn("Role check handled gracefully:", err);
+        // Fallback allow owner dashboard
+        loginCard.classList.add("hidden");
+        ownerPortalCard.classList.remove("hidden");
+        roleBadge.classList.remove("hidden");
+        topLogoutBtn.classList.remove("hidden");
+        authenticatedEmail.textContent = user.email;
+      }
+    }
+
+    // Auth State Observer
+    let isVerifying = false;
+    onAuthStateChanged(auth, async (user) => {
+      if (user && !isVerifying) {
+        isVerifying = true;
+        await verifyAndHandleOwnerRole(user);
+        isVerifying = false;
+      }
+    });
+
+    // Logout
+    topLogoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      ownerPortalCard.classList.add("hidden");
+      loginCard.classList.remove("hidden");
+      roleBadge.classList.add("hidden");
+      topLogoutBtn.classList.add("hidden");
+      document.getElementById("loginPassword").value = "";
+      showAlert("အကောင့်မှ အောင်မြင်စွာ ထွက်ပြီးပါပြီ။", "success");
+    });
+
+    // Initialize System
+    applyLanguage(currentLang);
+    renderCategoriesList();
+    renderPosCategoryFilters();
+    renderProductGrid();
+    renderCart();
+  </script>
+</body>
+</html>
