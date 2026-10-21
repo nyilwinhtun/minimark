@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>MiniMart POS - ဆိုင်ရှင် Portal</title>
   
-  <!-- Mobile & PWA App Meta Tags for Android -->
+  <!-- Mobile & PWA App Meta Tags for Android & iOS -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,7 +13,7 @@
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <!-- HTML5 QR / Barcode Scanner CDN for Android Camera -->
+  <!-- HTML5 QR / Barcode Scanner CDN for Mobile Camera -->
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <script>
@@ -96,7 +96,6 @@
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-2">
       
-      <!-- Brand Logo -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center shadow-lg font-bold text-lg sm:text-xl text-white">
           M
@@ -112,7 +111,6 @@
 
       <!-- Theme & Lang Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2">
-        <!-- Theme Colors Switcher -->
         <div class="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/80 gap-1" title="Theme Color">
           <button type="button" onclick="setTheme('emerald')" class="w-3.5 h-3.5 rounded-full bg-emerald-500" aria-label="Emerald"></button>
           <button type="button" onclick="setTheme('indigo')" class="w-3.5 h-3.5 rounded-full bg-indigo-500" aria-label="Indigo"></button>
@@ -121,13 +119,11 @@
           <button type="button" onclick="setTheme('amber')" class="w-3.5 h-3.5 rounded-full bg-amber-500" aria-label="Amber"></button>
         </div>
 
-        <!-- Language Toggle (MM / EN) -->
         <button id="langToggleBtn" type="button" class="px-2 py-1 rounded-xl border border-slate-700 bg-slate-800/90 text-xs font-semibold text-slate-200 flex items-center gap-1">
           <span class="text-xs">🌐</span>
           <span id="langLabel">MM</span>
         </button>
 
-        <!-- Logout Button -->
         <button id="topLogoutBtn" type="button" class="hidden px-2 py-1 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-xs font-semibold">
           ထွက်မည်
         </button>
@@ -141,7 +137,6 @@
   <!-- ========================================== -->
   <main class="flex-1 flex flex-col justify-center p-2.5 sm:p-6 max-w-7xl mx-auto w-full">
 
-    <!-- Global Alert / Toast -->
     <div id="alertBox" class="hidden mb-3 p-3 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2 transition">
       <svg id="alertIcon" class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
       <span id="alertMessage" class="flex-1 leading-relaxed"></span>
@@ -149,7 +144,7 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- SECTION 1: LOGIN CARD (MOBILE FRIENDLY)                  -->
+    <!-- SECTION 1: LOGIN CARD                                    -->
     <!-- ======================================================== -->
     <div id="loginCard" class="w-full max-w-md mx-auto bg-slate-900/95 border border-slate-800 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur relative">
       <div class="text-center mb-5">
@@ -194,7 +189,6 @@
         </button>
       </form>
 
-      <!-- Quick Email Link -->
       <div class="mt-3 p-2.5 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between gap-2">
         <div class="truncate text-slate-400">
           <span class="text-brand-500 font-bold">✉️ Firebase Email:</span>
@@ -210,7 +204,6 @@
         <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-900 px-3 text-slate-500">သို့မဟုတ်</span></div>
       </div>
 
-      <!-- Google Sign In Button -->
       <button type="button" id="googleSignInBtn" class="w-full py-2.5 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 shadow">
         <svg class="w-4 h-4" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -227,7 +220,6 @@
     <!-- ======================================================== -->
     <div id="ownerPortalCard" class="hidden w-full space-y-4">
       
-      <!-- Top Action Navigation Tabs -->
       <div class="flex items-center justify-between gap-1.5 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto">
         <div class="flex items-center gap-1.5 min-w-max">
           <button type="button" onclick="switchTab('pos')" id="tabBtnPos" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white flex items-center gap-1.5">
@@ -248,27 +240,23 @@
       <!-- TAB 1: POS CHECKOUT SYSTEM -->
       <div id="viewPos" class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
-        <!-- Left: Product List & Camera / Barcode Scanner (7 Cols) -->
         <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
-            <!-- Barcode Inputs: Keyboard & Android Camera Scanner -->
             <div class="mb-3">
               <div class="flex items-center justify-between mb-1">
                 <label for="barcodeScanInput" class="text-xs font-semibold text-brand-500">🔍 Barcode စကင်ဖတ်ရန်</label>
-                <!-- Camera Scanner Toggle Button for Android -->
                 <button type="button" id="toggleCameraScannerBtn" onclick="toggleCameraScanner()" class="px-2.5 py-1 rounded-xl bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 border border-brand-500/30 text-xs font-bold flex items-center gap-1">
                   <span>📷</span> <span id="cameraBtnText">Camera ဖြင့် Scan ဖတ်မည်</span>
                 </button>
               </div>
 
-              <!-- Camera View Container (Hidden by default, opens on tap) -->
+              <!-- Camera View Container -->
               <div id="cameraScannerBox" class="hidden mb-3 p-2 bg-black rounded-2xl border border-brand-500/50 relative">
                 <div id="cameraReader" class="w-full rounded-xl overflow-hidden"></div>
-                <p class="text-[11px] text-center text-slate-400 mt-1.5">ကင်မရာရှေ့တွင် Barcode ပြပါ (အလိုအလျောက် ဖတ်ပေးပါမည်)</p>
-                <button type="button" onclick="toggleCameraScanner()" class="absolute top-3 right-3 px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-xs font-bold">&times; ပိတ်မည်</button>
+                <p class="text-[11px] text-center text-slate-400 mt-1.5">ကင်မရာရှေ့တွင် Barcode ပြပါ</p>
+                <button type="button" onclick="toggleCameraScanner()" class="absolute top-3 right-3 px-2 py-1 bg-red-600/80 text-white rounded-lg text-xs font-bold">&times; ပိတ်မည်</button>
               </div>
 
-              <!-- Manual / Hardware Barcode Input -->
               <div class="relative">
                 <input type="text" id="barcodeScanInput" placeholder="Barcode ရိုက်ထည့်ပါ သို့မဟုတ် Scan ဖတ်ပါ..." autofocus class="w-full pl-3 pr-20 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
                 <button type="button" id="manualScanBtn" class="absolute inset-y-1 right-1 px-3 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold">
@@ -277,15 +265,11 @@
               </div>
             </div>
 
-            <!-- Category Filters -->
             <div class="mb-3 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin" id="posCategoryFilters"></div>
-
-            <!-- Product Grid -->
             <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[420px] overflow-y-auto pr-1"></div>
           </div>
         </div>
 
-        <!-- Right: Cart & Payment Section (5 Cols) -->
         <div id="cartSection" class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
@@ -300,7 +284,6 @@
             </div>
           </div>
 
-          <!-- Checkout & Calculation Area -->
           <div class="pt-2.5 border-t border-slate-800 space-y-2.5">
             <div class="flex justify-between items-center text-xs text-slate-400">
               <span>စုစုပေါင်း အရေအတွက်:</span>
@@ -311,7 +294,6 @@
               <span id="cartGrandTotal" class="text-xl sm:text-2xl font-black text-brand-500 font-mono">0 MMK</span>
             </div>
 
-            <!-- Payment Selector -->
             <div>
               <div class="grid grid-cols-2 gap-2">
                 <button type="button" onclick="selectPaymentMethod('cash')" id="payCashBtn" class="py-2 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold flex items-center justify-center gap-1">
@@ -407,7 +389,7 @@
   </main>
 
   <!-- ======================================================== -->
-  <!-- ANDROID MOBILE STICKY BOTTOM BAR (PORTRAIT PHONES)       -->
+  <!-- MOBILE BOTTOM BAR                                        -->
   <!-- ======================================================== -->
   <div id="mobileBottomBar" class="hidden lg:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 border-t border-slate-800 p-2.5 px-4 z-40 backdrop-blur flex items-center justify-between">
     <div>
@@ -504,7 +486,7 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-    // Original Firebase Configuration (လုံးဝမထိဘဲ မူလအတိုင်း)
+    // Original Firebase Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBLlMTLwJcdECtZR_whZG5B_QY_xKIMGJk",
       authDomain: "mini-mark-2f4fa.firebaseapp.com",
@@ -793,9 +775,7 @@
       } catch (e) {}
     }
 
-    // =========================================================================
-    // ANDROID CAMERA BARCODE SCANNER (Webcam / Mobile Camera)
-    // =========================================================================
+    // Camera Scanner
     let html5QrCode = null;
     let isCameraScanning = false;
 
@@ -819,12 +799,10 @@
         try {
           html5QrCode = new Html5Qrcode("cameraReader");
           const config = { fps: 10, qrbox: { width: 250, height: 160 } };
-          
           await html5QrCode.start(
-            { facingMode: "environment" }, // Use back camera on Android
+            { facingMode: "environment" },
             config,
             (decodedText) => {
-              // On Successful Scan
               addProductToCart(decodedText);
               showAlert(`Scan ရရှိပါသည်: ${decodedText}`, "success");
             },
@@ -832,7 +810,7 @@
           );
         } catch (camErr) {
           console.error("Camera Error:", camErr);
-          showAlert("Camera ဖွင့်မရပါ: Chrome Settings > Site settings > Camera ခွင့်ပြုချက် (Permission) ပေးထားရန် လိုအပ်ပါသည်။", "error");
+          showAlert("Camera ဖွင့်မရပါ: Site settings တွင် Camera ခွင့်ပြုချက် ပေးထားရန် လိုအပ်ပါသည်။", "error");
           box.classList.add("hidden");
           btnText.textContent = "Camera ဖြင့် Scan ဖတ်မည်";
           isCameraScanning = false;
@@ -967,7 +945,7 @@
 
     window.closeReceiptModal = () => document.getElementById("receiptModal").classList.add("hidden");
 
-    // Bluetooth Thermal Printer (Android Chrome Web Bluetooth)
+    // Bluetooth Thermal Printer
     window.printToBluetoothThermalPrinter = async function() {
       if (!navigator.bluetooth) {
         showAlert("Android ဖုန်းတွင် Bluetooth Print ထုတ်ရန် Chrome Browser ကို သုံးပြီး HTTPS Link ဖြင့် ဖွင့်ထားရပါမည်။", "warning");
