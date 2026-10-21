@@ -1,12 +1,21 @@
-```html
 <!DOCTYPE html>
 <html lang="my" data-theme="emerald">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiniMart POS - ဆိုင်ရှင် (Owner) Portal & POS System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>MiniMart POS - ဆိုင်ရှင် Portal</title>
+  
+  <!-- Mobile & PWA App Meta Tags for Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f172a">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <!-- HTML5 QR / Barcode Scanner CDN for Android Camera -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -29,14 +38,12 @@
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap');
     
     :root {
-      /* Default Emerald Theme */
       --brand-50: #ecfdf5;
       --brand-100: #d1fae5;
       --brand-500: #10b981;
       --brand-600: #059669;
       --brand-700: #047857;
     }
-
     [data-theme="indigo"] {
       --brand-50: #eef2ff;
       --brand-100: #e0e7ff;
@@ -44,7 +51,6 @@
       --brand-600: #4f46e5;
       --brand-700: #4338ca;
     }
-
     [data-theme="violet"] {
       --brand-50: #f5f3ff;
       --brand-100: #ede9fe;
@@ -52,7 +58,6 @@
       --brand-600: #7c3aed;
       --brand-700: #6d28d9;
     }
-
     [data-theme="rose"] {
       --brand-50: #fff1f2;
       --brand-100: #ffe4e6;
@@ -60,7 +65,6 @@
       --brand-600: #e11d48;
       --brand-700: #be123c;
     }
-
     [data-theme="amber"] {
       --brand-50: #fffbeb;
       --brand-100: #fef3c7;
@@ -71,73 +75,60 @@
 
     body {
       font-family: 'Plus Jakarta Sans', 'Noto Sans Myanmar', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     /* Thermal Receipt Print Stylesheet */
     @media print {
-      body * {
-        visibility: hidden;
-      }
-      #printableThermalVoucher, #printableThermalVoucher * {
-        visibility: visible;
-      }
+      body * { visibility: hidden; }
+      #printableThermalVoucher, #printableThermalVoucher * { visibility: visible; }
       #printableThermalVoucher {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 78mm;
-        margin: 0;
-        padding: 5mm;
-        color: #000;
-        background: #fff;
-        font-family: monospace;
-        font-size: 11px;
+        position: absolute; left: 0; top: 0; width: 78mm; margin: 0; padding: 5mm; color: #000; background: #fff; font-family: monospace; font-size: 11px;
       }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white pb-20 lg:pb-0">
 
   <!-- ========================================== -->
   <!-- Top Global Navigation Bar & Controls       -->
   <!-- ========================================== -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between gap-2">
       
       <!-- Brand Logo -->
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center shadow-lg shadow-brand-500/20 font-bold text-xl text-white">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-500 flex items-center justify-center shadow-lg font-bold text-lg sm:text-xl text-white">
           M
         </div>
         <div>
-          <h1 class="font-bold text-base sm:text-lg tracking-tight text-white flex items-center gap-2">
+          <h1 class="font-bold text-sm sm:text-lg tracking-tight text-white flex items-center gap-1.5">
             <span>MiniMart POS</span>
-            <span id="roleBadge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20 font-semibold uppercase">Owner</span>
+            <span id="roleBadge" class="hidden text-[9px] px-1.5 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20 font-semibold uppercase">Owner</span>
           </h1>
-          <p class="text-[11px] text-slate-400" data-i18n="tagline">ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှုနှင့် အရောင်းစနစ်</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400">ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှု</p>
         </div>
       </div>
 
-      <!-- Controls: Theme Color Selector & Language Switcher -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        
+      <!-- Theme & Lang Controls -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <!-- Theme Colors Switcher -->
-        <div class="flex items-center bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/80 gap-1.5" title="Theme Color ပြောင်းလဲရန်">
-          <button type="button" onclick="setTheme('emerald')" class="w-4 h-4 rounded-full bg-emerald-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-emerald-400" aria-label="Emerald Theme"></button>
-          <button type="button" onclick="setTheme('indigo')" class="w-4 h-4 rounded-full bg-indigo-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-indigo-400" aria-label="Indigo Theme"></button>
-          <button type="button" onclick="setTheme('violet')" class="w-4 h-4 rounded-full bg-purple-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-purple-400" aria-label="Violet Theme"></button>
-          <button type="button" onclick="setTheme('rose')" class="w-4 h-4 rounded-full bg-rose-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-rose-400" aria-label="Rose Theme"></button>
-          <button type="button" onclick="setTheme('amber')" class="w-4 h-4 rounded-full bg-amber-500 hover:scale-110 transition ring-offset-1 ring-offset-slate-900 focus:ring-2 focus:ring-amber-400" aria-label="Amber Theme"></button>
+        <div class="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/80 gap-1" title="Theme Color">
+          <button type="button" onclick="setTheme('emerald')" class="w-3.5 h-3.5 rounded-full bg-emerald-500" aria-label="Emerald"></button>
+          <button type="button" onclick="setTheme('indigo')" class="w-3.5 h-3.5 rounded-full bg-indigo-500" aria-label="Indigo"></button>
+          <button type="button" onclick="setTheme('violet')" class="w-3.5 h-3.5 rounded-full bg-purple-500" aria-label="Violet"></button>
+          <button type="button" onclick="setTheme('rose')" class="w-3.5 h-3.5 rounded-full bg-rose-500" aria-label="Rose"></button>
+          <button type="button" onclick="setTheme('amber')" class="w-3.5 h-3.5 rounded-full bg-amber-500" aria-label="Amber"></button>
         </div>
 
         <!-- Language Toggle (MM / EN) -->
-        <button id="langToggleBtn" type="button" class="px-2.5 py-1.5 rounded-xl border border-slate-700 hover:border-slate-600 bg-slate-800/90 hover:bg-slate-800 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 shadow-sm">
-          <span class="text-sm">🌐</span>
-          <span id="langLabel">မြန်မာ</span>
+        <button id="langToggleBtn" type="button" class="px-2 py-1 rounded-xl border border-slate-700 bg-slate-800/90 text-xs font-semibold text-slate-200 flex items-center gap-1">
+          <span class="text-xs">🌐</span>
+          <span id="langLabel">MM</span>
         </button>
 
-        <!-- User Logout Button (Visible only when logged in) -->
-        <button id="topLogoutBtn" type="button" class="hidden px-2.5 py-1.5 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 text-xs font-semibold transition" data-i18n="logout">
+        <!-- Logout Button -->
+        <button id="topLogoutBtn" type="button" class="hidden px-2 py-1 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-xs font-semibold">
           ထွက်မည်
         </button>
       </div>
@@ -148,98 +139,79 @@
   <!-- ========================================== -->
   <!-- Main Content Container                     -->
   <!-- ========================================== -->
-  <main class="flex-1 flex flex-col justify-center p-3 sm:p-6 max-w-7xl mx-auto w-full">
+  <main class="flex-1 flex flex-col justify-center p-2.5 sm:p-6 max-w-7xl mx-auto w-full">
 
-    <!-- Global Alert / Notification Toast -->
-    <div id="alertBox" class="hidden mb-4 p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2.5 transition">
-      <svg id="alertIcon" class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
+    <!-- Global Alert / Toast -->
+    <div id="alertBox" class="hidden mb-3 p-3 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2 transition">
+      <svg id="alertIcon" class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
       <span id="alertMessage" class="flex-1 leading-relaxed"></span>
       <button id="alertCloseBtn" class="text-slate-400 hover:text-white">&times;</button>
     </div>
 
     <!-- ======================================================== -->
-    <!-- SECTION 1: LOGIN CARD (EMAIL, PASSWORD, RESET & GOOGLE)  -->
+    <!-- SECTION 1: LOGIN CARD (MOBILE FRIENDLY)                  -->
     <!-- ======================================================== -->
-    <div id="loginCard" class="w-full max-w-md mx-auto bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 backdrop-blur relative">
-      
-      <!-- Top Icon & Header -->
-      <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-500 mb-3">
-          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+    <div id="loginCard" class="w-full max-w-md mx-auto bg-slate-900/95 border border-slate-800 rounded-3xl p-5 sm:p-8 shadow-2xl backdrop-blur relative">
+      <div class="text-center mb-5">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-brand-500 mb-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
-        <h2 class="text-2xl font-bold text-white tracking-tight" data-i18n="loginTitle">ဆိုင်ရှင် အကောင့်ဝင်ရန်</h2>
-        <p class="text-xs text-slate-400 mt-1" data-i18n="loginSubtitle">Email နှင့် Password ဖြင့် လုံခြုံစွာ ဝင်ရောက်ပါ</p>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">ဆိုင်ရှင် အကောင့်ဝင်ရန်</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Email နှင့် Password ဖြင့် ဝင်ရောက်ပါ</p>
       </div>
 
-      <!-- Main Login Form -->
-      <form id="ownerLoginForm" class="space-y-4">
+      <form id="ownerLoginForm" class="space-y-3.5">
         <div>
-          <label for="loginEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5" data-i18n="emailLabel">
-            Email လိပ်စာ (သို့မဟုတ် Username)
-          </label>
-          <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
-            </span>
-            <input type="email" id="loginEmail" required placeholder="bonyiontheway@gmail.com" autocomplete="email" class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
-          </div>
+          <label for="loginEmail" class="block text-xs font-semibold text-slate-300 mb-1">Email လိပ်စာ (သို့မဟုတ် Username)</label>
+          <input type="email" id="loginEmail" required placeholder="bonyiontheway@gmail.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
         </div>
 
         <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label for="loginPassword" class="block text-xs font-semibold uppercase tracking-wider text-slate-300" data-i18n="passwordLabel">
-              Password (လျှို့ဝှက်ကုဒ်)
-            </label>
-            <button type="button" id="openForgotModalBtn" class="text-xs text-brand-500 hover:text-brand-100 transition hover:underline" data-i18n="forgotPassword">
-              Password မေ့နေပါသလား?
-            </button>
+          <div class="flex items-center justify-between mb-1">
+            <label for="loginPassword" class="block text-xs font-semibold text-slate-300">Password (လျှို့ဝှက်ကုဒ်)</label>
+            <button type="button" id="openForgotModalBtn" class="text-xs text-brand-500 hover:underline">Password မေ့နေပါသလား?</button>
           </div>
           <div class="relative">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-            </span>
-            <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password" class="w-full pl-9 pr-10 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
-            <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300" title="Password ကြည့်ရန်">
+            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-3 pr-10 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
             </button>
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center text-xs text-slate-400">
           <label class="flex items-center space-x-2 cursor-pointer select-none">
-            <input type="checkbox" id="rememberMe" checked class="rounded border-slate-700 bg-slate-950 text-brand-500 focus:ring-brand-500">
-            <span data-i18n="rememberMe">Login မှတ်ထားမည် (Remember Me)</span>
+            <input type="checkbox" id="rememberMe" checked class="rounded border-slate-700 bg-slate-950 text-brand-500">
+            <span>Login မှတ်ထားမည် (Remember Me)</span>
           </label>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit" id="submitLoginBtn" class="w-full py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 active:bg-brand-700 text-white font-semibold text-sm shadow-lg shadow-brand-500/20 transition flex items-center justify-center gap-2">
+        <button type="submit" id="submitLoginBtn" class="w-full py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-sm shadow-lg transition flex items-center justify-center gap-2">
           <span id="submitSpinner" class="hidden">
             <svg class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
           </span>
-          <span id="submitText" data-i18n="signInBtn">အကောင့်ဝင်ရောက်မည်</span>
+          <span id="submitText">အကောင့်ဝင်ရောက်မည်</span>
         </button>
       </form>
 
-      <!-- Direct 1-Click Firebase Email Reset & Verification Shortcut -->
-      <div class="mt-3 p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between gap-2">
+      <!-- Quick Email Link -->
+      <div class="mt-3 p-2.5 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between gap-2">
         <div class="truncate text-slate-400">
           <span class="text-brand-500 font-bold">✉️ Firebase Email:</span>
-          <span class="text-[11px] block text-slate-500">Email ထံသို့ Reset Link ပို့မည်</span>
+          <span class="text-[11px] block text-slate-500">Reset Link တိုက်ရိုက်ပို့မည်</span>
         </div>
-        <button type="button" id="quickSendEmailBtn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-500 border border-brand-500/30 text-xs font-semibold whitespace-nowrap transition">
-          Email သို့ Link ပို့မည်
+        <button type="button" id="quickSendEmailBtn" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-500 border border-brand-500/30 text-xs font-semibold whitespace-nowrap">
+          Email ပို့မည်
         </button>
       </div>
 
-      <!-- Divider -->
-      <div class="relative my-4">
+      <div class="relative my-3.5">
         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
         <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-900 px-3 text-slate-500">သို့မဟုတ်</span></div>
       </div>
 
-      <!-- Google Sign In Button (အကယ်၍ Gmail ဖြင့် မူလအတိုင်း အလွယ်တကူ ဝင်လိုပါက အရန်သင့်ထားရှိပေးထားခြင်း) -->
-      <button type="button" id="googleSignInBtn" class="w-full py-2.5 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-xs sm:text-sm transition flex items-center justify-center gap-2.5 shadow hover:border-slate-600">
+      <!-- Google Sign In Button -->
+      <button type="button" id="googleSignInBtn" class="w-full py-2.5 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 shadow">
         <svg class="w-4 h-4" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -248,304 +220,265 @@
         </svg>
         <span>Google အကောင့်ဖြင့် တိုက်ရိုက်ဝင်မည်</span>
       </button>
-
-      <p class="text-center text-[11px] text-slate-500 mt-4">
-        🔒 ဆိုင်ရှင် (Owner) အကောင့်ဖြင့်သာ စီမံခန့်ခွဲမှုအားလုံးကို လုပ်ဆောင်နိုင်ပါသည်။
-      </p>
     </div>
 
     <!-- ======================================================== -->
-    <!-- SECTION 2: AUTHENTICATED POS & MANAGEMENT PORTAL         -->
+    <!-- SECTION 2: AUTHENTICATED POS & PORTAL                    -->
     <!-- ======================================================== -->
-    <div id="ownerPortalCard" class="hidden w-full space-y-5">
+    <div id="ownerPortalCard" class="hidden w-full space-y-4">
       
       <!-- Top Action Navigation Tabs -->
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 p-2 rounded-2xl border border-slate-800">
-        <div class="flex flex-wrap items-center gap-2">
-          <button type="button" onclick="switchTab('pos')" id="tabBtnPos" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2">
-            <span>🛒</span> <span data-i18n="tabPos">အရောင်းကောင်တာ (POS)</span>
+      <div class="flex items-center justify-between gap-1.5 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 overflow-x-auto">
+        <div class="flex items-center gap-1.5 min-w-max">
+          <button type="button" onclick="switchTab('pos')" id="tabBtnPos" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white flex items-center gap-1.5">
+            <span>🛒</span> <span>POS</span>
           </button>
-          <button type="button" onclick="switchTab('bulk')" id="tabBtnBulk" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
-            <span>📦</span> <span data-i18n="tabBulk">ပစ္စည်းအများအပြား ထည့်သွင်းခြင်း (Bulk Add)</span>
+          <button type="button" onclick="switchTab('bulk')" id="tabBtnBulk" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 flex items-center gap-1.5">
+            <span>📦</span> <span>Bulk Add</span>
           </button>
-          <button type="button" onclick="switchTab('categories')" id="tabBtnCategories" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2">
-            <span>🏷️</span> <span data-i18n="tabCategories">Category စီမံခန့်ခွဲမှု</span>
+          <button type="button" onclick="switchTab('categories')" id="tabBtnCategories" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 flex items-center gap-1.5">
+            <span>🏷️</span> <span>Categories</span>
           </button>
         </div>
-
-        <!-- Quick Status Indicator -->
-        <div class="flex items-center gap-2 text-xs text-slate-400 px-3">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span id="authenticatedEmail" class="font-mono text-slate-300">owner@minimart.com</span>
+        <div class="text-[11px] text-slate-400 pr-2 truncate max-w-[120px] font-mono" id="authenticatedEmail">
+          owner
         </div>
       </div>
 
-      <!-- TAB 1: POS CHECKOUT SYSTEM & BARCODE SCANNER -->
-      <div id="viewPos" class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <!-- TAB 1: POS CHECKOUT SYSTEM -->
+      <div id="viewPos" class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         
-        <!-- Left: Product List & Barcode Scanner Area (7 Cols) -->
-        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+        <!-- Left: Product List & Camera / Barcode Scanner (7 Cols) -->
+        <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-3xl p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
-            <!-- Barcode Scanner Search Input -->
-            <div class="mb-4">
-              <label for="barcodeScanInput" class="block text-xs font-semibold uppercase tracking-wider text-brand-500 mb-1.5 flex items-center justify-between">
-                <span data-i18n="barcodeScannerHeading">🔍 Barcode စကင်ဖတ်ရန် (သို့မဟုတ် ကုဒ်ရိုက်ထည့်ပါ)</span>
-                <span class="text-[10px] text-slate-400 font-normal">Press Enter after scan</span>
-              </label>
+            <!-- Barcode Inputs: Keyboard & Android Camera Scanner -->
+            <div class="mb-3">
+              <div class="flex items-center justify-between mb-1">
+                <label for="barcodeScanInput" class="text-xs font-semibold text-brand-500">🔍 Barcode စကင်ဖတ်ရန်</label>
+                <!-- Camera Scanner Toggle Button for Android -->
+                <button type="button" id="toggleCameraScannerBtn" onclick="toggleCameraScanner()" class="px-2.5 py-1 rounded-xl bg-brand-500/20 hover:bg-brand-500/30 text-brand-400 border border-brand-500/30 text-xs font-bold flex items-center gap-1">
+                  <span>📷</span> <span id="cameraBtnText">Camera ဖြင့် Scan ဖတ်မည်</span>
+                </button>
+              </div>
+
+              <!-- Camera View Container (Hidden by default, opens on tap) -->
+              <div id="cameraScannerBox" class="hidden mb-3 p-2 bg-black rounded-2xl border border-brand-500/50 relative">
+                <div id="cameraReader" class="w-full rounded-xl overflow-hidden"></div>
+                <p class="text-[11px] text-center text-slate-400 mt-1.5">ကင်မရာရှေ့တွင် Barcode ပြပါ (အလိုအလျောက် ဖတ်ပေးပါမည်)</p>
+                <button type="button" onclick="toggleCameraScanner()" class="absolute top-3 right-3 px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-xs font-bold">&times; ပိတ်မည်</button>
+              </div>
+
+              <!-- Manual / Hardware Barcode Input -->
               <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-                </span>
-                <input type="text" id="barcodeScanInput" placeholder="ဥပမာ: 885012345601 (Scan Barcode...)" autofocus class="w-full pl-11 pr-24 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
-                <button type="button" id="manualScanBtn" class="absolute inset-y-1.5 right-1.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition" data-i18n="scanAddBtn">
+                <input type="text" id="barcodeScanInput" placeholder="Barcode ရိုက်ထည့်ပါ သို့မဟုတ် Scan ဖတ်ပါ..." autofocus class="w-full pl-3 pr-20 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono text-xs sm:text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <button type="button" id="manualScanBtn" class="absolute inset-y-1 right-1 px-3 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold">
                   ရှာမည်
                 </button>
               </div>
             </div>
 
-            <!-- Category Filter Tabs -->
-            <div class="mb-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin" id="posCategoryFilters">
-              <!-- Rendered dynamically -->
-            </div>
+            <!-- Category Filters -->
+            <div class="mb-3 flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin" id="posCategoryFilters"></div>
 
             <!-- Product Grid -->
-            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[460px] overflow-y-auto pr-1">
-              <!-- Rendered dynamically -->
-            </div>
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[420px] overflow-y-auto pr-1"></div>
           </div>
         </div>
 
-        <!-- Right: Cart & Payment Checkout Section (5 Cols) -->
-        <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+        <!-- Right: Cart & Payment Section (5 Cols) -->
+        <div id="cartSection" class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-3xl p-3.5 sm:p-5 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 class="font-bold text-base text-white flex items-center gap-2">
-                <span>🛒</span> <span data-i18n="cartHeading">အရောင်းခြင်းတောင်း</span>
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-800">
+              <h3 class="font-bold text-sm sm:text-base text-white flex items-center gap-1.5">
+                <span>🛒</span> <span>အရောင်းခြင်းတောင်း</span>
               </h3>
-              <button type="button" onclick="clearCart()" class="text-xs text-red-400 hover:text-red-300 transition" data-i18n="clearCart">
-                ရှင်းထုတ်မည်
-              </button>
+              <button type="button" onclick="clearCart()" class="text-xs text-red-400 hover:text-red-300">ရှင်းထုတ်မည်</button>
             </div>
 
-            <!-- Cart Items List -->
-            <div id="cartItemsContainer" class="divide-y divide-slate-800/80 max-h-[300px] overflow-y-auto my-3 pr-1">
-              <!-- Cart items rendered dynamically -->
-              <p class="text-center text-xs text-slate-500 py-8" data-i18n="cartEmpty">ခြင်းတောင်းထဲတွင် ပစ္စည်းမရှိသေးပါ</p>
+            <div id="cartItemsContainer" class="divide-y divide-slate-800/80 max-h-[260px] overflow-y-auto my-2.5 pr-1">
+              <p class="text-center text-xs text-slate-500 py-6">ခြင်းတောင်းထဲတွင် ပစ္စည်းမရှိသေးပါ</p>
             </div>
           </div>
 
           <!-- Checkout & Calculation Area -->
-          <div class="pt-3 border-t border-slate-800 space-y-3">
+          <div class="pt-2.5 border-t border-slate-800 space-y-2.5">
             <div class="flex justify-between items-center text-xs text-slate-400">
-              <span data-i18n="subtotal">စုစုပေါင်း ပစ္စည်းအရေအတွက်:</span>
+              <span>စုစုပေါင်း အရေအတွက်:</span>
               <span id="cartTotalItems" class="font-semibold text-slate-200">0 ခု</span>
             </div>
             <div class="flex justify-between items-baseline">
-              <span class="text-sm font-bold text-white" data-i18n="grandTotal">ကျသင့်ငွေ စုစုပေါင်း:</span>
-              <span id="cartGrandTotal" class="text-2xl font-black text-brand-500 font-mono">0 MMK</span>
+              <span class="text-xs sm:text-sm font-bold text-white">ကျသင့်ငွေ စုစုပေါင်း:</span>
+              <span id="cartGrandTotal" class="text-xl sm:text-2xl font-black text-brand-500 font-mono">0 MMK</span>
             </div>
 
-            <!-- Payment Method Selector (Cash or e-Pay) -->
-            <div class="pt-2">
-              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2" data-i18n="paymentMethod">
-                ငွေပေးချေမှုပုံစံ ရွေးချယ်ပါ
-              </label>
+            <!-- Payment Selector -->
+            <div>
               <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="selectPaymentMethod('cash')" id="payCashBtn" class="py-2.5 px-3 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold transition flex items-center justify-center gap-1.5">
-                  <span>💵</span> <span data-i18n="payCash">ငွေသား (Cash)</span>
+                <button type="button" onclick="selectPaymentMethod('cash')" id="payCashBtn" class="py-2 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold flex items-center justify-center gap-1">
+                  <span>💵</span> <span>ငွေသား (Cash)</span>
                 </button>
-                <button type="button" onclick="selectPaymentMethod('epay')" id="payEpayBtn" class="py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold transition flex items-center justify-center gap-1.5">
-                  <span>📱</span> <span data-i18n="payEpay">e-Pay (KPay/Wave)</span>
+                <button type="button" onclick="selectPaymentMethod('epay')" id="payEpayBtn" class="py-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold flex items-center justify-center gap-1">
+                  <span>📱</span> <span>e-Pay</span>
                 </button>
               </div>
             </div>
 
-            <!-- Cash Input Field (Active when Cash is selected) -->
-            <div id="cashPaymentDetail" class="space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
-              <div class="flex items-center justify-between text-xs">
-                <span class="text-slate-400" data-i18n="cashReceived">ပေးငွေ (Amount Tendered):</span>
-                <input type="number" id="cashReceivedInput" placeholder="0" class="w-32 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-right font-mono text-white text-xs focus:ring-1 focus:ring-brand-500">
+            <div id="cashPaymentDetail" class="space-y-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-400">ပေးငွေ:</span>
+                <input type="number" id="cashReceivedInput" placeholder="0" class="w-28 px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-right font-mono text-white text-xs">
               </div>
-              <div class="flex items-center justify-between text-xs font-bold">
-                <span class="text-slate-400" data-i18n="cashChange">ပြန်အမ်းငွေ (Change):</span>
+              <div class="flex items-center justify-between font-bold">
+                <span class="text-slate-400">ပြန်အမ်းငွေ:</span>
                 <span id="cashChangeDisplay" class="font-mono text-emerald-400">0 MMK</span>
               </div>
             </div>
 
-            <!-- e-Pay Detail (Active when e-Pay is selected) -->
-            <div id="epayPaymentDetail" class="hidden space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+            <div id="epayPaymentDetail" class="hidden space-y-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs">
               <div class="flex justify-between items-center">
-                <span class="text-slate-400" data-i18n="selectEwallet">Wallet ရွေးချယ်ပါ:</span>
+                <span class="text-slate-400">Wallet:</span>
                 <select id="ewalletType" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white">
                   <option value="KBZPay">KBZPay (09-123456789)</option>
                   <option value="WavePay">WavePay (09-987654321)</option>
                   <option value="AYAPay">AYA Pay</option>
-                  <option value="CBPay">CB Pay</option>
                 </select>
               </div>
-              <div>
-                <input type="text" id="epayTxnId" placeholder="Transaction ID (နောက်ဆုံး ၄ လုံး)" class="w-full px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
-              </div>
+              <input type="text" id="epayTxnId" placeholder="Transaction ID (နောက်ဆုံး ၄ လုံး)" class="w-full px-2 py-1 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
             </div>
 
-            <!-- Checkout Button -->
-            <button type="button" id="completeSaleBtn" onclick="checkoutOrder()" class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-sm shadow-xl shadow-brand-500/20 transition flex items-center justify-center gap-2">
-              <span>✓</span> <span data-i18n="checkoutBtn">ငွေရှင်းပြီး ဘောက်ချာထုတ်မည်</span>
+            <button type="button" id="completeSaleBtn" onclick="checkoutOrder()" class="w-full py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm shadow-xl transition flex items-center justify-center gap-1.5">
+              <span>✓</span> <span>ငွေရှင်းပြီး ဘောက်ချာထုတ်မည်</span>
             </button>
           </div>
         </div>
 
       </div>
 
-      <!-- TAB 2: BULK PRODUCTS ADDING SYSTEM -->
-      <div id="viewBulk" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+      <!-- TAB 2: BULK PRODUCTS ADDING -->
+      <div id="viewBulk" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-3.5 sm:p-5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-800">
           <div>
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <span>📦</span> <span data-i18n="bulkHeading">ပစ္စည်းအများအပြား တစ်ပြိုင်နက် ထည့်သွင်းခြင်း</span>
-            </h3>
-            <p class="text-xs text-slate-400" data-i18n="bulkSubtitle">အောက်ပါဇယားတွင် အတန်းများတိုး၍ ပစ္စည်းအများအပြားကို တစ်ကြိမ်တည်း ထည့်သွင်းသိမ်းဆည်းနိုင်ပါသည်။</p>
+            <h3 class="text-base font-bold text-white flex items-center gap-1.5"><span>📦</span> <span>Bulk Products Add</span></h3>
+            <p class="text-[11px] text-slate-400">ပစ္စည်းအများအပြား တစ်ပြိုင်နက် ရိုက်ထည့်သိမ်းဆည်းပါ</p>
           </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="addBulkRow()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-500 border border-brand-500/30 text-xs font-bold transition flex items-center gap-1.5">
-              <span>+</span> <span data-i18n="addAnotherRow">နောက်ထပ် ပစ္စည်းတစ်ခု ထပ်ထည့်ရန်</span>
-            </button>
-            <button type="button" onclick="saveAllBulkProducts()" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition shadow-lg shadow-brand-500/20 flex items-center gap-1.5">
-              <span>💾</span> <span data-i18n="saveAllProducts">အားလုံး သိမ်းဆည်းမည် (Save All)</span>
-            </button>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="addBulkRow()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 text-brand-500 border border-brand-500/30 text-xs font-bold">+ Row တိုးမည်</button>
+            <button type="button" onclick="saveAllBulkProducts()" class="px-3 py-1.5 rounded-xl bg-brand-600 text-white text-xs font-bold">💾 အားလုံးသိမ်းမည်</button>
           </div>
         </div>
 
-        <!-- Bulk Products Table -->
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs border-collapse">
             <thead>
               <tr class="border-b border-slate-800 text-slate-400">
-                <th class="py-2.5 px-2 w-10 text-center">#</th>
-                <th class="py-2.5 px-2 min-w-[140px]" data-i18n="colBarcode">ဘားကုဒ် (Barcode)</th>
-                <th class="py-2.5 px-2 min-w-[180px]" data-i18n="colName">ပစ္စည်းအမည် (Name)</th>
-                <th class="py-2.5 px-2 min-w-[140px]" data-i18n="colCategory">အမျိုးအစား (Category)</th>
-                <th class="py-2.5 px-2 min-w-[110px]" data-i18n="colBuyPrice">ဝယ်ဈေး (Buy)</th>
-                <th class="py-2.5 px-2 min-w-[110px]" data-i18n="colSellPrice">ရောင်းဈေး (Sell)</th>
-                <th class="py-2.5 px-2 min-w-[90px]" data-i18n="colStock">Stock အရေအတွက်</th>
-                <th class="py-2.5 px-2 w-12 text-center" data-i18n="colAction">ဖျက်</th>
+                <th class="py-2 px-1 text-center w-8">#</th>
+                <th class="py-2 px-1 min-w-[130px]">ဘားကုဒ်</th>
+                <th class="py-2 px-1 min-w-[150px]">ပစ္စည်းအမည်</th>
+                <th class="py-2 px-1 min-w-[130px]">Category</th>
+                <th class="py-2 px-1 min-w-[90px]">ဝယ်ဈေး</th>
+                <th class="py-2 px-1 min-w-[90px]">ရောင်းဈေး</th>
+                <th class="py-2 px-1 min-w-[70px]">Stock</th>
+                <th class="py-2 px-1 text-center w-8">ဖျက်</th>
               </tr>
             </thead>
-            <tbody id="bulkTableBody" class="divide-y divide-slate-800/60 font-mono">
-              <!-- Rows added dynamically -->
-            </tbody>
+            <tbody id="bulkTableBody" class="divide-y divide-slate-800/60 font-mono"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- TAB 3: CATEGORY MANAGEMENT & MINUS SYSTEM -->
-      <div id="viewCategories" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 space-y-6">
+      <!-- TAB 3: CATEGORY MANAGEMENT -->
+      <div id="viewCategories" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-3.5 sm:p-5 space-y-4">
         <div>
-          <h3 class="text-lg font-bold text-white flex items-center gap-2">
-            <span>🏷️</span> <span data-i18n="categoryHeading">Category စီမံခန့်ခွဲမှုနှင့် အသစ်ထည့်သွင်းခြင်း</span>
-          </h3>
-          <p class="text-xs text-slate-400" data-i18n="categorySubtitle">မလိုချင်တော့သော Categories များကို Minus (-) ခလုတ်နှိပ်၍ အလွယ်တကူ ဖယ်ရှားနိုင်ပါသည်။</p>
+          <h3 class="text-base font-bold text-white flex items-center gap-1.5"><span>🏷️</span> <span>Category စီမံခန့်ခွဲမှု</span></h3>
+          <p class="text-[11px] text-slate-400">Minus (-) နှိပ်၍ အလွယ်တကူ ဖယ်ရှားနိုင်သည်</p>
         </div>
 
-        <!-- Add Category Form -->
-        <form id="addCategoryForm" class="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-950 p-3 rounded-2xl border border-slate-800">
-          <input type="text" id="newCategoryIcon" placeholder="Emoji (💄/🍲/🧃)" class="w-24 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-center focus:ring-1 focus:ring-brand-500">
-          <input type="text" id="newCategoryName" required placeholder="Category အမည် (ဥပမာ- အလှကုန်၊ ဖျော်ရည်...)" class="flex-1 px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white focus:ring-1 focus:ring-brand-500">
-          <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md">
-            <span>+</span> <span data-i18n="addCategoryBtn">Category အသစ်ထည့်မည်</span>
-          </button>
+        <form id="addCategoryForm" class="flex flex-wrap sm:flex-nowrap items-center gap-2 bg-slate-950 p-2.5 rounded-2xl border border-slate-800">
+          <input type="text" id="newCategoryIcon" placeholder="Emoji" class="w-16 px-2.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-center">
+          <input type="text" id="newCategoryName" required placeholder="Category အမည်..." class="flex-1 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white">
+          <button type="submit" class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl bg-brand-600 text-white text-xs font-bold">+ ထည့်မည်</button>
         </form>
 
-        <!-- Current Categories Grid with Minus (-) System -->
-        <div>
-          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3" data-i18n="activeCategoriesList">
-            လက်ရှိ Category များ စာရင်း
-          </h4>
-          <div id="categoriesListGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            <!-- Categories rendered dynamically with minus buttons -->
-          </div>
-        </div>
+        <div id="categoriesListGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5"></div>
       </div>
 
     </div>
 
   </main>
 
-  <!-- ========================================== -->
+  <!-- ======================================================== -->
+  <!-- ANDROID MOBILE STICKY BOTTOM BAR (PORTRAIT PHONES)       -->
+  <!-- ======================================================== -->
+  <div id="mobileBottomBar" class="hidden lg:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 border-t border-slate-800 p-2.5 px-4 z-40 backdrop-blur flex items-center justify-between">
+    <div>
+      <span class="text-[10px] text-slate-400 block">ကျသင့်ငွေ စုစုပေါင်း</span>
+      <span id="mobileBottomTotal" class="text-base font-black text-brand-500 font-mono">0 MMK</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button type="button" onclick="scrollToCart()" class="px-3.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-200 text-xs font-bold flex items-center gap-1.5">
+        <span>🛒</span> <span id="mobileBottomItems">0</span>
+      </button>
+      <button type="button" onclick="checkoutOrder()" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-bold shadow-lg shadow-brand-500/20">
+        ငွေရှင်းမည် →
+      </button>
+    </div>
+  </div>
+
   <!-- MODAL: RECEIPT & BLUETOOTH THERMAL PRINTER -->
-  <!-- ========================================== -->
-  <div id="receiptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-    <div class="w-full max-w-sm bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4">
+  <div id="receiptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm">
+    <div class="w-full max-w-sm bg-slate-900 border border-slate-700 rounded-3xl p-5 shadow-2xl space-y-3.5">
       <div class="text-center">
-        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-xl mb-2">
-          ✓
-        </div>
-        <h3 class="font-bold text-base text-white" data-i18n="saleCompleted">အရောင်း အောင်မြင်ပါသည်!</h3>
-        <p class="text-xs text-slate-400" data-i18n="saleCompletedSub">Thermal Voucher ထုတ်ယူရန် Bluetooth Printer သို့ ပို့ဆောင်နိုင်ပါပြီ</p>
+        <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-lg mb-1.5">✓</div>
+        <h3 class="font-bold text-sm text-white">အရောင်း အောင်မြင်ပါသည်!</h3>
+        <p class="text-[11px] text-slate-400">Bluetooth Thermal Printer သို့ ပို့နိုင်ပါပြီ</p>
       </div>
 
-      <!-- Preview Voucher Box -->
-      <div class="bg-white text-black p-4 rounded-xl font-mono text-xs leading-relaxed max-h-72 overflow-y-auto shadow-inner" id="voucherPreviewContent">
-        <!-- Receipt Text -->
-      </div>
+      <div class="bg-white text-black p-3 rounded-xl font-mono text-[11px] leading-relaxed max-h-60 overflow-y-auto" id="voucherPreviewContent"></div>
 
-      <!-- Action Buttons (Bluetooth Print & Close) -->
-      <div class="space-y-2">
-        <button type="button" id="printBluetoothThermalBtn" onclick="printToBluetoothThermalPrinter()" class="w-full py-2.5 px-4 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-lg shadow-brand-500/20 transition flex items-center justify-center gap-2">
-          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-          <span data-i18n="printBluetoothBtn">🖨️ Bluetooth Thermal Printer ဖြင့် ပရင့်ထုတ်မည်</span>
+      <div class="space-y-1.5">
+        <button type="button" onclick="printToBluetoothThermalPrinter()" class="w-full py-2.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs shadow-lg flex items-center justify-center gap-1.5">
+          <span>🖨️</span> <span>Bluetooth Thermal Printer ဖြင့် ထုတ်မည်</span>
         </button>
-
-        <button type="button" onclick="printStandardVoucher()" class="w-full py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition" data-i18n="printBrowserBtn">
-          📄 Browser Print (Voucher မူရင်း)
+        <button type="button" onclick="window.print()" class="w-full py-2 px-3 rounded-xl bg-slate-800 text-slate-300 font-semibold text-xs">
+          📄 Browser Print
         </button>
-
-        <button type="button" onclick="closeReceiptModal()" class="w-full py-2 text-center text-xs text-slate-400 hover:text-white transition" data-i18n="closeBtn">
-          ပိတ်မည်
-        </button>
+        <button type="button" onclick="closeReceiptModal()" class="w-full py-1.5 text-center text-xs text-slate-400">ပိတ်မည်</button>
       </div>
     </div>
   </div>
 
-  <!-- Hidden Container for Standard Window.print() thermal output -->
   <div id="printableThermalVoucher" class="hidden"></div>
 
-  <!-- Modal: Password Reset Modal -->
+  <!-- Password Reset Modal -->
   <div id="forgotPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-    <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-        <h3 class="font-bold text-base text-white" data-i18n="resetModalTitle">Password ပြန်လည်တောင်းယူရန်</h3>
+    <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-5 shadow-2xl space-y-3">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+        <h3 class="font-bold text-sm text-white">Password ပြန်လည်တောင်းယူရန်</h3>
         <button type="button" id="closeForgotModalBtn" class="text-slate-400 hover:text-white">&times;</button>
       </div>
-      <p class="text-xs text-slate-400 leading-relaxed" data-i18n="resetModalDesc">သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Firebase Authentication မှ Password အသစ် ပြောင်းလဲသတ်မှတ်နိုင်မည့် လုံခြုံသော Link ကို Email ပို့ပေးပါမည်။</p>
-      <form id="forgotPasswordForm" class="space-y-3">
-        <input type="email" id="resetEmail" required placeholder="bonyiontheway@gmail.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:ring-1 focus:ring-brand-500">
-        <div id="modalAlertBox" class="hidden p-3 rounded-xl text-xs font-medium"></div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" id="cancelForgotModalBtn" class="px-4 py-2 rounded-xl border border-slate-700 text-xs text-slate-300" data-i18n="cancelBtn">မလုပ်တော့ပါ</button>
-          <button type="submit" id="sendResetBtn" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-bold flex items-center gap-1.5 shadow-md">
-            <span id="resetSpinner" class="hidden">
-              <svg class="animate-spin w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
-            </span>
-            <span id="resetBtnText" data-i18n="sendResetBtn">Reset Link ပို့မည်</span>
+      <p class="text-xs text-slate-400">သင့်အကောင့်ဖွင့်ထားသော Email ထည့်ပေးပါ။ Password အသစ်သတ်မှတ်ရန် Link ပို့ပေးပါမည်။</p>
+      <form id="forgotPasswordForm" class="space-y-2.5">
+        <input type="email" id="resetEmail" required placeholder="bonyiontheway@gmail.com" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white">
+        <div id="modalAlertBox" class="hidden p-2.5 rounded-xl text-xs font-medium"></div>
+        <div class="flex justify-end gap-2 pt-1">
+          <button type="button" id="cancelForgotModalBtn" class="px-3 py-1.5 rounded-xl border border-slate-700 text-xs text-slate-300">မလုပ်တော့ပါ</button>
+          <button type="submit" id="sendResetBtn" class="px-3 py-1.5 rounded-xl bg-brand-600 text-xs text-white font-bold flex items-center gap-1">
+            <span id="resetSpinner" class="hidden"><svg class="animate-spin w-3 h-3 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg></span>
+            <span id="resetBtnText">Reset Link ပို့မည်</span>
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-3 text-center text-xs text-slate-500">
-    MiniMart POS &copy; 2026 &middot; Firebase Modular Auth & Bluetooth Thermal ESC/POS Engine
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-2.5 text-center text-[10px] text-slate-500">
+    MiniMart POS &copy; 2026 &middot; Android Mobile & PWA Ready
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: ORIGINAL FIREBASE SDK + MULTI-LANG + POS + PRINTER ENGINE    -->
+  <!-- JAVASCRIPT: ORIGINAL FIREBASE + CAMERA SCANNER + ANDROID OPTIMIZATIONS   -->
   <!-- ========================================================================= -->
   <script type="module">
-    // =========================================================================
-    // 1. FIREBASE AUTHENTICATION & FIRESTORE CORE (မူလအတိုင်း အတိအကျ ထိန်းသိမ်းထားခြင်း)
-    // =========================================================================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { 
       getAuth, 
@@ -571,7 +504,7 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-    // Original Firebase Configuration
+    // Original Firebase Configuration (လုံးဝမထိဘဲ မူလအတိုင်း)
     const firebaseConfig = {
       apiKey: "AIzaSyBLlMTLwJcdECtZR_whZG5B_QY_xKIMGJk",
       authDomain: "mini-mark-2f4fa.firebaseapp.com",
@@ -582,7 +515,6 @@
       measurementId: "G-5EXZRQ0TJN"
     };
 
-    // Initialize Firebase
     let app, auth, db, googleProvider;
     try {
       app = initializeApp(firebaseConfig);
@@ -591,215 +523,37 @@
       googleProvider = new GoogleAuthProvider();
     } catch (e) {
       console.error("Firebase Init Error:", e);
-      showAlert("Firebase configuration စတင်ရာတွင် ချို့ယွင်းချက်ဖြစ်ပေါ်နေပါသည်။ API Key များကို စစ်ဆေးပါ။", "error");
     }
 
-    // Myanmar Language Firebase Error Mapper (မူရင်း error စစ်ဆေးချက်)
     function formatAuthError(err) {
       console.error("Firebase Auth Error:", err);
       const code = err.code || "";
       switch (code) {
         case "auth/operation-not-allowed":
-          return "🚨 Firebase Console တွင် 'Email/Password' Sign-in Provider ကို Enable မလုပ်ထားသေးပါ။ (Authentication > Sign-in method သို့သွားပြီး ဖွင့်ပေးပါ)။";
+          return "🚨 Firebase Console တွင် 'Email/Password' Sign-in Provider ကို Enable မလုပ်ထားသေးပါ။";
         case "auth/user-not-found":
-          return "ဤ Email ဖြင့် ဖွင့်ထားသော အကောင့်ရှာမတွေ့ပါ။ Email စစ်ဆေးပေးပါ သို့မဟုတ် အကောင့်အသစ်ဖွင့်ပါ။";
+          return "ဤ Email ဖြင့် ဖွင့်ထားသော အကောင့်ရှာမတွေ့ပါ။";
         case "auth/wrong-password":
         case "auth/invalid-credential":
-          return "Password မကိုက်ညီခြင်း သို့မဟုတ် Email/Password ဖြင့် သီးသန့် အကောင့်မဖွင့်ရသေးပါ။ အောက်ရှိ 'Email သို့ Link ပို့မည်' သို့မဟုတ် 'Google အကောင့်ဖြင့် တိုက်ရိုက်ဝင်မည်' ကို အသုံးပြုနိုင်ပါသည်။";
+          return "Password မကိုက်ညီခြင်း သို့မဟုတ် Email/Password သီးသန့် အကောင့်မဖွင့်ရသေးပါ။ 'Google အကောင့်ဖြင့် ဝင်မည်' သို့မဟုတ် 'Email သို့ Link ပို့မည်' ကို သုံးနိုင်ပါသည်။";
         case "auth/invalid-email":
-          return "Email ပုံစံ မမှန်ကန်ပါ။ (ဥပမာ: name@domain.com)";
+          return "Email ပုံစံ မမှန်ကန်ပါ။";
         case "auth/too-many-requests":
-          return "အကြိမ်ကြိမ် မှားယွင်းစွာ ကြိုးစားထားသဖြင့် အကောင့်ကို ခေတ္တ ပိတ်ထားပါသည်။ မိနစ်အနည်းငယ် စောင့်ဆိုင်းပြီးမှ ပြန်လည်ကြိုးစားပါ။";
-        case "auth/popup-closed-by-user":
-          return "Google Sign-In popup window ကို အသုံးပြုသူမှ ပိတ်လိုက်ပါသည်။";
-        case "auth/unauthorized-domain":
-          return "လက်ရှိ Domain (သို့မဟုတ် localhost) ကို Firebase Console > Authentication > Settings > Authorized Domains ထဲ ထည့်သွင်းပေးရန် လိုအပ်ပါသည်။";
-        case "auth/network-request-failed":
-          return "အင်တာနက်လိုင်း ချိတ်ဆက်မှု မရှိပါ သို့မဟုတ် ကွန်ရက်နှေးကွေးနေပါသည်။";
+          return "အကြိမ်ကြိမ် ကြိုးစားထားသဖြင့် ခေတ္တစောင့်ဆိုင်းပြီးမှ ပြန်လည်ကြိုးစားပါ။";
         default:
-          return err.message || "အကောင့်ဝင်ရောက်မှု မအောင်မြင်ပါ။ Firebase ဆက်တင်များကို စစ်ဆေးပါ။";
+          return err.message || "အကောင့်ဝင်ရောက်မှု မအောင်မြင်ပါ။";
       }
     }
 
-    // =========================================================================
-    // 2. MULTI-LANGUAGE SYSTEM (MYANMAR / ENGLISH)
-    // =========================================================================
-    let currentLang = localStorage.getItem("mm_pos_lang") || "my";
-
-    const translations = {
-      my: {
-        tagline: "ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှုနှင့် အရောင်းစနစ်",
-        loginTitle: "ဆိုင်ရှင် အကောင့်ဝင်ရန်",
-        loginSubtitle: "Email နှင့် Password ဖြင့် လုံခြုံစွာ ဝင်ရောက်ပါ",
-        emailLabel: "Email လိပ်စာ (သို့မဟုတ် Username)",
-        passwordLabel: "Password (လျှို့ဝှက်ကုဒ်)",
-        forgotPassword: "Password မေ့နေပါသလား?",
-        rememberMe: "Login မှတ်ထားမည် (Remember Me)",
-        signInBtn: "အကောင့်ဝင်ရောက်မည်",
-        tabPos: "အရောင်းကောင်တာ (POS)",
-        tabBulk: "ပစ္စည်းအများအပြား ထည့်သွင်းခြင်း (Bulk Add)",
-        tabCategories: "Category စီမံခန့်ခွဲမှု",
-        barcodeScannerHeading: "🔍 Barcode စကင်ဖတ်ရန် (သို့မဟုတ် ကုဒ်ရိုက်ထည့်ပါ)",
-        scanAddBtn: "ရှာမည်",
-        cartHeading: "အရောင်းခြင်းတောင်း",
-        clearCart: "ရှင်းထုတ်မည်",
-        cartEmpty: "ခြင်းတောင်းထဲတွင် ပစ္စည်းမရှိသေးပါ",
-        subtotal: "စုစုပေါင်း ပစ္စည်းအရေအတွက်:",
-        grandTotal: "ကျသင့်ငွေ စုစုပေါင်း:",
-        paymentMethod: "ငွေပေးချေမှုပုံစံ ရွေးချယ်ပါ",
-        payCash: "ငွေသား (Cash)",
-        payEpay: "e-Pay (KPay/Wave)",
-        cashReceived: "ပေးငွေ (Amount Tendered):",
-        cashChange: "ပြန်အမ်းငွေ (Change):",
-        selectEwallet: "Wallet ရွေးချယ်ပါ:",
-        checkoutBtn: "ငွေရှင်းပြီး ဘောက်ချာထုတ်မည်",
-        bulkHeading: "ပစ္စည်းအများအပြား တစ်ပြိုင်နက် ထည့်သွင်းခြင်း",
-        bulkSubtitle: "အောက်ပါဇယားတွင် အတန်းများတိုး၍ ပစ္စည်းအများအပြားကို တစ်ကြိမ်တည်း ထည့်သွင်းသိမ်းဆည်းနိုင်ပါသည်။",
-        addAnotherRow: "နောက်ထပ် ပစ္စည်းတစ်ခု ထပ်ထည့်ရန်",
-        saveAllProducts: "အားလုံး သိမ်းဆည်းမည် (Save All)",
-        colBarcode: "ဘားကုဒ် (Barcode)",
-        colName: "ပစ္စည်းအမည် (Name)",
-        colCategory: "အမျိုးအစား (Category)",
-        colBuyPrice: "ဝယ်ဈေး (Buy)",
-        colSellPrice: "ရောင်းဈေး (Sell)",
-        colStock: "Stock အရေအတွက်",
-        colAction: "ဖျက်",
-        categoryHeading: "Category စီမံခန့်ခွဲမှုနှင့် အသစ်ထည့်သွင်းခြင်း",
-        categorySubtitle: "မလိုချင်တော့သော Categories များကို Minus (-) ခလုတ်နှိပ်၍ အလွယ်တကူ ဖယ်ရှားနိုင်ပါသည်။",
-        addCategoryBtn: "Category အသစ်ထည့်မည်",
-        activeCategoriesList: "လက်ရှိ Category များ စာရင်း",
-        saleCompleted: "အရောင်း အောင်မြင်ပါသည်!",
-        saleCompletedSub: "Thermal Voucher ထုတ်ယူရန် Bluetooth Printer သို့ ပို့ဆောင်နိုင်ပါပြီ",
-        printBluetoothBtn: "🖨️ Bluetooth Thermal Printer ဖြင့် ပရင့်ထုတ်မည်",
-        printBrowserBtn: "📄 Browser Print (Voucher မူရင်း)",
-        closeBtn: "ပိတ်မည်",
-        resetModalTitle: "Password ပြန်လည်တောင်းယူရန်",
-        resetModalDesc: "သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Firebase Authentication မှ Password အသစ် ပြောင်းလဲသတ်မှတ်နိုင်မည့် လုံခြုံသော Link ကို Email ပို့ပေးပါမည်။",
-        cancelBtn: "မလုပ်တော့ပါ",
-        sendResetBtn: "Reset Link ပို့မည်",
-        logout: "ထွက်မည်"
-      },
-      en: {
-        tagline: "Retail Sales & Inventory Management System",
-        loginTitle: "Owner Portal Sign In",
-        loginSubtitle: "Sign in securely with Email and Password",
-        emailLabel: "Email Address (or Username)",
-        passwordLabel: "Password",
-        forgotPassword: "Forgot Password?",
-        rememberMe: "Remember Me",
-        signInBtn: "Sign In",
-        tabPos: "Point of Sale (POS)",
-        tabBulk: "Bulk Products Add",
-        tabCategories: "Categories Management",
-        barcodeScannerHeading: "🔍 Scan Barcode (or Enter Code)",
-        scanAddBtn: "Search",
-        cartHeading: "Current Cart",
-        clearCart: "Clear Cart",
-        cartEmpty: "No items in cart",
-        subtotal: "Total Quantity:",
-        grandTotal: "Grand Total:",
-        paymentMethod: "Select Payment Method",
-        payCash: "Cash",
-        payEpay: "e-Pay (KPay/Wave)",
-        cashReceived: "Amount Tendered:",
-        cashChange: "Change Due:",
-        selectEwallet: "Choose Wallet:",
-        checkoutBtn: "Checkout & Print Voucher",
-        bulkHeading: "Bulk Products Quick Entry",
-        bulkSubtitle: "Add multiple rows below to batch upload inventory items simultaneously.",
-        addAnotherRow: "Add Another Row",
-        saveAllProducts: "Save All Products",
-        colBarcode: "Barcode",
-        colName: "Product Name",
-        colCategory: "Category",
-        colBuyPrice: "Buy Price",
-        colSellPrice: "Sell Price",
-        colStock: "Stock Qty",
-        colAction: "Del",
-        categoryHeading: "Categories & Minus (-) System",
-        categorySubtitle: "Easily remove unwanted categories by clicking the Minus (-) button.",
-        addCategoryBtn: "Add Category",
-        activeCategoriesList: "Active Categories",
-        saleCompleted: "Sale Completed Successfully!",
-        saleCompletedSub: "Ready to print thermal receipt to Bluetooth printer",
-        printBluetoothBtn: "🖨️ Print via Bluetooth Thermal Printer",
-        printBrowserBtn: "📄 Browser Print Dialog",
-        closeBtn: "Close",
-        resetModalTitle: "Reset Password",
-        resetModalDesc: "Enter your registered email to receive a password reset link.",
-        cancelBtn: "Cancel",
-        sendResetBtn: "Send Reset Link",
-        logout: "Log Out"
-      }
-    };
-
-    function applyLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem("mm_pos_lang", lang);
-      document.getElementById("langLabel").textContent = lang === "my" ? "မြန်မာ" : "English";
-      
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (translations[lang] && translations[lang][key]) {
-          el.textContent = translations[lang][key];
-        }
-      });
-      renderPosCategoryFilters();
-    }
-
-    document.getElementById("langToggleBtn").addEventListener("click", () => {
-      applyLanguage(currentLang === "my" ? "en" : "my");
-    });
-
-    // =========================================================================
-    // 3. THEME COLOR SWITCHER
-    // =========================================================================
-    window.setTheme = function(themeName) {
-      document.documentElement.setAttribute("data-theme", themeName);
-      localStorage.setItem("mm_pos_theme", themeName);
-    };
-    const savedTheme = localStorage.getItem("mm_pos_theme") || "emerald";
-    window.setTheme(savedTheme);
-
-    // =========================================================================
-    // 4. FIREBASE AUTH ACTIONS (EMAIL/PASSWORD, RESET EMAIL, GOOGLE SIGN-IN)
-    // =========================================================================
-    const loginCard = document.getElementById("loginCard");
-    const ownerPortalCard = document.getElementById("ownerPortalCard");
-    const ownerLoginForm = document.getElementById("ownerLoginForm");
-    const loginEmailInput = document.getElementById("loginEmail");
-    const loginPasswordInput = document.getElementById("loginPassword");
-    const rememberMeCheckbox = document.getElementById("rememberMe");
-    const togglePasswordBtn = document.getElementById("togglePasswordBtn");
-    const submitLoginBtn = document.getElementById("submitLoginBtn");
-    const submitSpinner = document.getElementById("submitSpinner");
-    const submitText = document.getElementById("submitText");
-    const googleSignInBtn = document.getElementById("googleSignInBtn");
-    const roleBadge = document.getElementById("roleBadge");
-    const topLogoutBtn = document.getElementById("topLogoutBtn");
-    const authenticatedEmail = document.getElementById("authenticatedEmail");
-
+    // UI Feedback
     const alertBox = document.getElementById("alertBox");
     const alertMessage = document.getElementById("alertMessage");
     const alertIcon = document.getElementById("alertIcon");
-    const alertCloseBtn = document.getElementById("alertCloseBtn");
-
-    const openForgotModalBtn = document.getElementById("openForgotModalBtn");
-    const closeForgotModalBtn = document.getElementById("closeForgotModalBtn");
-    const cancelForgotModalBtn = document.getElementById("cancelForgotModalBtn");
-    const forgotPasswordModal = document.getElementById("forgotPasswordModal");
-    const forgotPasswordForm = document.getElementById("forgotPasswordForm");
-    const resetEmailInput = document.getElementById("resetEmail");
-    const sendResetBtn = document.getElementById("sendResetBtn");
-    const resetSpinner = document.getElementById("resetSpinner");
-    const resetBtnText = document.getElementById("resetBtnText");
-    const modalAlertBox = document.getElementById("modalAlertBox");
-    const quickSendEmailBtn = document.getElementById("quickSendEmailBtn");
+    document.getElementById("alertCloseBtn").addEventListener("click", () => alertBox.classList.add("hidden"));
 
     function showAlert(msg, type = "error") {
       alertBox.classList.remove("hidden", "bg-red-950/80", "border-red-600/60", "text-red-200", "bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200", "bg-amber-950/80", "border-amber-600/60", "text-amber-200");
       alertBox.classList.add("border");
-      
       if (type === "error") {
         alertBox.classList.add("bg-red-950/80", "border-red-600/60", "text-red-200");
         alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
@@ -813,73 +567,53 @@
       alertMessage.textContent = msg;
     }
 
-    function hideAlert() {
-      alertBox.classList.add("hidden");
-    }
-    alertCloseBtn.addEventListener("click", hideAlert);
-
-    function setSubmitting(loading) {
-      submitLoginBtn.disabled = loading;
-      if (loading) {
-        submitSpinner.classList.remove("hidden");
-        submitText.textContent = "စစ်ဆေးနေပါသည်...";
-      } else {
-        submitSpinner.classList.add("hidden");
-        submitText.textContent = translations[currentLang].signInBtn;
-      }
-    }
-
-    // Toggle Password Visibility
-    togglePasswordBtn.addEventListener("click", () => {
-      const type = loginPasswordInput.getAttribute("type") === "password" ? "text" : "password";
-      loginPasswordInput.setAttribute("type", type);
+    // Language & Themes
+    let currentLang = localStorage.getItem("mm_pos_lang") || "my";
+    document.getElementById("langToggleBtn").addEventListener("click", () => {
+      currentLang = currentLang === "my" ? "en" : "my";
+      localStorage.setItem("mm_pos_lang", currentLang);
+      document.getElementById("langLabel").textContent = currentLang === "my" ? "MM" : "EN";
+      renderPosCategoryFilters();
     });
 
-    // Forgot Password Modal Handlers
-    openForgotModalBtn.addEventListener("click", () => {
-      modalAlertBox.classList.add("hidden");
-      resetEmailInput.value = loginEmailInput.value.trim() || "bonyiontheway@gmail.com";
-      forgotPasswordModal.classList.remove("hidden");
-    });
-    const closeModal = () => forgotPasswordModal.classList.add("hidden");
-    closeForgotModalBtn.addEventListener("click", closeModal);
-    cancelForgotModalBtn.addEventListener("click", closeModal);
+    window.setTheme = function(themeName) {
+      document.documentElement.setAttribute("data-theme", themeName);
+      localStorage.setItem("mm_pos_theme", themeName);
+    };
+    window.setTheme(localStorage.getItem("mm_pos_theme") || "emerald");
 
-    // =========================================================================
-    // Core Action 1: Handle Email & Password Login (With Auto-Create Fallback)
-    // =========================================================================
-    ownerLoginForm.addEventListener("submit", async (e) => {
+    // Login & Auth
+    const loginCard = document.getElementById("loginCard");
+    const ownerPortalCard = document.getElementById("ownerPortalCard");
+    const roleBadge = document.getElementById("roleBadge");
+    const topLogoutBtn = document.getElementById("topLogoutBtn");
+    const authenticatedEmail = document.getElementById("authenticatedEmail");
+    const mobileBottomBar = document.getElementById("mobileBottomBar");
+
+    document.getElementById("ownerLoginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      hideAlert();
-      const email = loginEmailInput.value.trim();
-      const password = loginPasswordInput.value;
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const remember = document.getElementById("rememberMe").checked;
+      if (!email || !password) return;
 
-      if (!email || !password) {
-        showAlert("Email နှင့် Password အားလုံး ဖြည့်သွင်းပေးပါ။", "warning");
-        return;
-      }
+      const submitBtn = document.getElementById("submitLoginBtn");
+      const spinner = document.getElementById("submitSpinner");
+      const text = document.getElementById("submitText");
+      submitBtn.disabled = true;
+      spinner.classList.remove("hidden");
+      text.textContent = "စစ်ဆေးနေပါသည်...";
 
-      setSubmitting(true);
       try {
-        const persistence = rememberMeCheckbox.checked ? browserLocalPersistence : browserSessionPersistence;
+        const persistence = remember ? browserLocalPersistence : browserSessionPersistence;
         await setPersistence(auth, persistence);
-
-        // 1. Try Signing In with Email and Password
         try {
           const cred = await signInWithEmailAndPassword(auth, email, password);
           await verifyAndHandleOwnerRole(cred.user);
-          return;
         } catch (signInErr) {
-          // 2. If account does not exist with this password, try creating account seamlessly
           if (signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential") {
-            try {
-              const newCred = await createUserWithEmailAndPassword(auth, email, password);
-              await verifyAndHandleOwnerRole(newCred.user);
-              return;
-            } catch (createErr) {
-              // If email already in use (e.g. created via Google), throw original error with helpful guidance
-              throw signInErr;
-            }
+            const newCred = await createUserWithEmailAndPassword(auth, email, password);
+            await verifyAndHandleOwnerRole(newCred.user);
           } else {
             throw signInErr;
           }
@@ -887,158 +621,74 @@
       } catch (err) {
         showAlert(formatAuthError(err), "error");
       } finally {
-        setSubmitting(false);
+        submitBtn.disabled = false;
+        spinner.classList.add("hidden");
+        text.textContent = "အကောင့်ဝင်ရောက်မည်";
       }
     });
 
-    // =========================================================================
-    // Core Action 2: Handle Google Account Sign-In (မူလအတိုင်း အတိအကျ)
-    // =========================================================================
-    googleSignInBtn.addEventListener("click", async () => {
-      hideAlert();
-      googleSignInBtn.disabled = true;
-      googleSignInBtn.classList.add("opacity-60");
+    document.getElementById("googleSignInBtn").addEventListener("click", async () => {
       try {
         const cred = await signInWithPopup(auth, googleProvider);
         await verifyAndHandleOwnerRole(cred.user);
       } catch (err) {
         showAlert(formatAuthError(err), "error");
-      } finally {
-        googleSignInBtn.disabled = false;
-        googleSignInBtn.classList.remove("opacity-60");
       }
     });
 
-    // =========================================================================
-    // Core Action 3: Handle Password Reset Email Sending (sendPasswordResetEmail)
-    // =========================================================================
-    async function triggerPasswordReset(targetEmail) {
-      if (!targetEmail) {
-        showAlert("Email လိပ်စာ ထည့်သွင်းပေးပါ။", "warning");
-        return;
-      }
-
-      showAlert(`Firebase မှ ${targetEmail} ထံသို့ Reset Link ပို့ဆောင်နေပါသည်...`, "warning");
+    document.getElementById("quickSendEmailBtn").addEventListener("click", async () => {
+      const email = document.getElementById("loginEmail").value.trim() || "bonyiontheway@gmail.com";
       try {
-        await sendPasswordResetEmail(auth, targetEmail);
-        showAlert(`✓ အောင်မြင်ပါသည်! ${targetEmail} ထံသို့ Password Reset Link ပို့ပြီးပါပြီ။ Gmail Inbox (သို့မဟုတ် Spam/Junk) ကို စစ်ဆေးပါ။`, "success");
+        await sendPasswordResetEmail(auth, email);
+        showAlert(`✓ ${email} ထံသို့ Reset Link ပို့ပြီးပါပြီ။ Gmail ကို စစ်ဆေးပါ။`, "success");
       } catch (err) {
         showAlert(formatAuthError(err), "error");
       }
-    }
-
-    quickSendEmailBtn.addEventListener("click", () => {
-      const email = loginEmailInput.value.trim() || "bonyiontheway@gmail.com";
-      triggerPasswordReset(email);
     });
 
-    forgotPasswordForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = resetEmailInput.value.trim();
-      if (!email) return;
-
-      sendResetBtn.disabled = true;
-      resetSpinner.classList.remove("hidden");
-      resetBtnText.textContent = "ပို့ဆောင်နေသည်...";
-      modalAlertBox.classList.add("hidden");
-
-      try {
-        await sendPasswordResetEmail(auth, email);
-        modalAlertBox.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-emerald-950/80 border border-emerald-600 text-emerald-200 block";
-        modalAlertBox.innerHTML = `
-          <strong>✓ အောင်မြင်ပါသည်!</strong><br>
-          <span class="font-semibold text-white">${email}</span> ထံသို့ Password reset link ပို့ပြီးပါပြီ။ Inbox (သို့မဟုတ် Spam folder) ကို စစ်ဆေးပြီး လျှို့ဝှက်ကုဒ် အသစ် သတ်မှတ်နိုင်ပါသည်။
-        `;
-        resetBtnText.textContent = "ထပ်မံပို့မည်";
-      } catch (err) {
-        modalAlertBox.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-red-950/80 border border-red-600 text-red-200 block";
-        modalAlertBox.textContent = formatAuthError(err);
-        resetBtnText.textContent = "ပြန်လည်ကြိုးစားမည်";
-      } finally {
-        sendResetBtn.disabled = false;
-        resetSpinner.classList.add("hidden");
-      }
-    });
-
-    // =========================================================================
-    // Core Action 4: Role Verification & Dashboard Render (မူလ logic အတိအကျ)
-    // =========================================================================
     async function verifyAndHandleOwnerRole(user) {
       try {
         const userDocRef = doc(db, "users", user.uid);
         const snap = await getDoc(userDocRef);
-
-        let isOwner = false;
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.role === "owner" || data.role === "admin") {
-            isOwner = true;
-          } else {
-            await signOut(auth);
-            showAlert("ဤအကောင့်သည် ဆိုင်ရှင် (Owner) ခွင့်ပြုချက်မရှိပါ။", "error");
-            return;
-          }
-        } else {
-          // Auto initialize profile if first login
-          await setDoc(userDocRef, {
-            email: user.email,
-            role: "owner",
-            displayName: user.displayName || "MiniMart Owner",
-            createdAt: serverTimestamp(),
-            lastLogin: serverTimestamp()
-          });
-          isOwner = true;
+        if (!snap.exists()) {
+          await setDoc(userDocRef, { email: user.email, role: "owner", createdAt: serverTimestamp() });
         }
-
-        if (isOwner) {
-          loginCard.classList.add("hidden");
-          ownerPortalCard.classList.remove("hidden");
-          roleBadge.classList.remove("hidden");
-          topLogoutBtn.classList.remove("hidden");
-          authenticatedEmail.textContent = user.email || "Owner";
-          showAlert("ဆိုင်ရှင်အကောင့်ဖြင့် အောင်မြင်စွာ ဝင်ရောက်ပြီးပါပြီ။", "success");
-        }
-      } catch (err) {
-        console.warn("Firestore role verification note:", err);
-        // Fallback to allow dashboard transition
         loginCard.classList.add("hidden");
         ownerPortalCard.classList.remove("hidden");
         roleBadge.classList.remove("hidden");
         topLogoutBtn.classList.remove("hidden");
+        mobileBottomBar.classList.remove("hidden");
         authenticatedEmail.textContent = user.email || "Owner";
+        showAlert("ဆိုင်ရှင်အကောင့်ဖြင့် အောင်မြင်စွာ ဝင်ရောက်ပြီးပါပြီ။", "success");
+      } catch (err) {
+        loginCard.classList.add("hidden");
+        ownerPortalCard.classList.remove("hidden");
+        mobileBottomBar.classList.remove("hidden");
       }
     }
 
-    // Helper: Auth State Observer
-    let isVerifying = false;
     onAuthStateChanged(auth, async (user) => {
-      if (user && !isVerifying) {
-        isVerifying = true;
-        await verifyAndHandleOwnerRole(user);
-        isVerifying = false;
-      }
+      if (user) await verifyAndHandleOwnerRole(user);
     });
 
-    // Logout Action
     topLogoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       ownerPortalCard.classList.add("hidden");
       loginCard.classList.remove("hidden");
       roleBadge.classList.add("hidden");
       topLogoutBtn.classList.add("hidden");
-      loginPasswordInput.value = "";
-      showAlert("အကောင့်မှ အောင်မြင်စွာ ထွက်ပြီးပါပြီ။", "success");
+      mobileBottomBar.classList.add("hidden");
+      if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop();
+      }
     });
 
-    // =========================================================================
-    // 5. CATEGORIES STATE & MINUS (-) SYSTEM
-    // =========================================================================
+    // Categories
     let categories = JSON.parse(localStorage.getItem("mm_pos_categories")) || [
-      { id: "c1", icon: "💄", name: "အလှကုန် (Cosmetics)" },
-      { id: "c2", icon: "🍲", name: "အစားအသောက် (Food)" },
-      { id: "c3", icon: "🧃", name: "ဖျော်ရည် (Beverages)" },
-      { id: "c4", icon: "🧴", name: "လူသုံးကုန် (Household)" },
-      { id: "c5", icon: "💊", name: "ဆေးဝါး (Medicine)" }
+      { id: "c1", icon: "💄", name: "အလှကုန်" },
+      { id: "c2", icon: "🍲", name: "အစားအသောက်" },
+      { id: "c3", icon: "🧃", name: "ဖျော်ရည်" },
+      { id: "c4", icon: "🧴", name: "လူသုံးကုန်" }
     ];
     let selectedCategoryFilter = "all";
 
@@ -1051,7 +701,6 @@
     window.removeCategory = function(catId) {
       categories = categories.filter(c => c.id !== catId);
       saveCategories();
-      showAlert("Category ကို အောင်မြင်စွာ ဖယ်ရှားလိုက်ပါပြီ။", "success");
     };
 
     document.getElementById("addCategoryForm").addEventListener("submit", (e) => {
@@ -1059,291 +708,162 @@
       const icon = document.getElementById("newCategoryIcon").value.trim() || "🏷️";
       const name = document.getElementById("newCategoryName").value.trim();
       if (!name) return;
-
-      const newId = "c_" + Date.now();
-      categories.push({ id: newId, icon, name });
+      categories.push({ id: "c_" + Date.now(), icon, name });
       saveCategories();
-      document.getElementById("newCategoryIcon").value = "";
       document.getElementById("newCategoryName").value = "";
-      showAlert(`Category "${name}" ကို အောင်မြင်စွာ ထည့်သွင်းပြီးပါပြီ။`, "success");
     });
 
     function renderCategoriesList() {
       const container = document.getElementById("categoriesListGrid");
       container.innerHTML = "";
       categories.forEach(cat => {
-        const div = document.createElement("div");
-        div.className = "flex items-center justify-between p-3 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition";
-        div.innerHTML = `
-          <div class="flex items-center space-x-2.5 truncate">
-            <span class="text-xl">${cat.icon}</span>
-            <span class="text-xs font-semibold text-white truncate">${cat.name}</span>
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-950 border border-slate-800">
+            <span class="text-xs font-semibold">${cat.icon} ${cat.name}</span>
+            <button type="button" onclick="removeCategory('${cat.id}')" class="w-6 h-6 rounded-lg bg-red-500/10 text-red-400 font-bold">&minus;</button>
           </div>
-          <!-- Minus (-) Remove Button -->
-          <button type="button" onclick="removeCategory('${cat.id}')" title="ဖယ်ရှားရန်" class="w-7 h-7 flex-shrink-0 rounded-lg bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white flex items-center justify-center font-bold text-sm transition">
-            &minus;
-          </button>
         `;
-        container.appendChild(div);
       });
     }
 
     function renderPosCategoryFilters() {
       const filterBox = document.getElementById("posCategoryFilters");
-      const allText = currentLang === "my" ? "အားလုံး (All)" : "All Items";
       filterBox.innerHTML = `
-        <button type="button" onclick="filterByCategory('all')" class="px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${selectedCategoryFilter === 'all' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}">
-          ${allText}
+        <button type="button" onclick="filterByCategory('all')" class="px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap ${selectedCategoryFilter === 'all' ? 'bg-brand-600 text-white font-bold' : 'bg-slate-800 text-slate-300'}">
+          အားလုံး
         </button>
       `;
       categories.forEach(cat => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.onclick = () => filterByCategory(cat.id);
-        const isActive = selectedCategoryFilter === cat.id;
-        btn.className = `px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition flex items-center gap-1.5 ${isActive ? 'bg-brand-600 text-white font-bold' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`;
-        btn.innerHTML = `<span>${cat.icon}</span> <span>${cat.name}</span>`;
-        filterBox.appendChild(btn);
+        filterBox.innerHTML += `
+          <button type="button" onclick="filterByCategory('${cat.id}')" class="px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap ${selectedCategoryFilter === cat.id ? 'bg-brand-600 text-white font-bold' : 'bg-slate-800 text-slate-300'}">
+            ${cat.icon} ${cat.name}
+          </button>
+        `;
       });
     }
 
-    window.filterByCategory = function(catId) {
-      selectedCategoryFilter = catId;
+    window.filterByCategory = function(id) {
+      selectedCategoryFilter = id;
       renderPosCategoryFilters();
       renderProductGrid();
     };
 
-    // =========================================================================
-    // 6. PRODUCTS & BULK PRODUCTS ADDING SYSTEM
-    // =========================================================================
+    // Products & POS
     let products = JSON.parse(localStorage.getItem("mm_pos_products")) || [
-      { barcode: "885012345601", name: "Sunscreen SPF50+ 50ml", categoryId: "c1", buyPrice: 12000, sellPrice: 15500, stock: 45 },
-      { barcode: "885012345602", name: "Lipstick Matte Red", categoryId: "c1", buyPrice: 4500, sellPrice: 6500, stock: 30 },
-      { barcode: "885012345603", name: "Instant Noodle Spicy", categoryId: "c2", buyPrice: 1100, sellPrice: 1400, stock: 120 },
-      { barcode: "885012345604", name: "Orange Juice Fresh 250ml", categoryId: "c3", buyPrice: 1800, sellPrice: 2300, stock: 60 }
+      { barcode: "885012345601", name: "Sunscreen SPF50+", categoryId: "c1", buyPrice: 12000, sellPrice: 15500, stock: 45 },
+      { barcode: "885012345602", name: "Lipstick Matte", categoryId: "c1", buyPrice: 4500, sellPrice: 6500, stock: 30 },
+      { barcode: "885012345603", name: "Instant Noodle", categoryId: "c2", buyPrice: 1100, sellPrice: 1400, stock: 120 },
+      { barcode: "885012345604", name: "Orange Juice 250ml", categoryId: "c3", buyPrice: 1800, sellPrice: 2300, stock: 60 }
     ];
+    let cart = [];
+    let selectedPayment = "cash";
 
     function saveProducts() {
       localStorage.setItem("mm_pos_products", JSON.stringify(products));
       renderProductGrid();
     }
 
-    let bulkRowsCounter = 0;
-    window.addBulkRow = function() {
-      bulkRowsCounter++;
-      const tbody = document.getElementById("bulkTableBody");
-      const tr = document.createElement("tr");
-      tr.id = `bulkRow_${bulkRowsCounter}`;
-      tr.className = "hover:bg-slate-800/40 transition";
-
-      let catOptions = `<option value="">(Select Category)</option>`;
-      categories.forEach(c => {
-        catOptions += `<option value="${c.id}">${c.icon} ${c.name}</option>`;
-      });
-
-      const randomBarcode = "885" + Math.floor(100000000 + Math.random() * 900000000);
-
-      tr.innerHTML = `
-        <td class="py-2 px-2 text-center text-slate-500">${bulkRowsCounter}</td>
-        <td class="py-2 px-2">
-          <input type="text" class="b-barcode w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white" value="${randomBarcode}" placeholder="Barcode">
-        </td>
-        <td class="py-2 px-2">
-          <input type="text" class="b-name w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white" placeholder="ပစ္စည်းအမည်">
-        </td>
-        <td class="py-2 px-2">
-          <select class="b-cat w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white">
-            ${catOptions}
-          </select>
-        </td>
-        <td class="py-2 px-2">
-          <input type="number" class="b-buy w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white text-right" placeholder="0">
-        </td>
-        <td class="py-2 px-2">
-          <input type="number" class="b-sell w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white text-right" placeholder="0">
-        </td>
-        <td class="py-2 px-2">
-          <input type="number" class="b-stock w-full px-2 py-1.5 rounded-lg bg-slate-950 border border-slate-700 text-xs text-white text-right" value="10">
-        </td>
-        <td class="py-2 px-2 text-center">
-          <button type="button" onclick="removeBulkRow('${tr.id}')" class="text-red-400 hover:text-red-200 font-bold">&times;</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    };
-
-    window.removeBulkRow = function(rowId) {
-      const el = document.getElementById(rowId);
-      if (el) el.remove();
-    };
-
-    window.saveAllBulkProducts = async function() {
-      const rows = document.querySelectorAll("#bulkTableBody tr");
-      if (rows.length === 0) {
-        showAlert("ထည့်သွင်းရန် ပစ္စည်းစာရင်း မရှိသေးပါ။ '+ နောက်ထပ် ပစ္စည်းတစ်ခု ထပ်ထည့်ရန်' ကို နှိပ်ပါ။", "warning");
-        return;
-      }
-
-      let newItems = [];
-      let hasError = false;
-
-      rows.forEach(r => {
-        const barcode = r.querySelector(".b-barcode").value.trim();
-        const name = r.querySelector(".b-name").value.trim();
-        const cat = r.querySelector(".b-cat").value;
-        const buy = parseFloat(r.querySelector(".b-buy").value) || 0;
-        const sell = parseFloat(r.querySelector(".b-sell").value) || 0;
-        const stock = parseInt(r.querySelector(".b-stock").value) || 0;
-
-        if (!barcode || !name) {
-          hasError = true;
-          return;
-        }
-
-        newItems.push({
-          barcode,
-          name,
-          categoryId: cat,
-          buyPrice: buy,
-          sellPrice: sell,
-          stock,
-          createdAt: new Date().toISOString()
-        });
-      });
-
-      if (hasError || newItems.length === 0) {
-        showAlert("Barcode နှင့် ကုန်ပစ္စည်းအမည် အားလုံး ဖြည့်သွင်းပေးပါ။", "warning");
-        return;
-      }
-
-      newItems.forEach(item => {
-        const idx = products.findIndex(p => p.barcode === item.barcode);
-        if (idx >= 0) {
-          products[idx] = item;
-        } else {
-          products.unshift(item);
-        }
-      });
-      saveProducts();
-
-      // Synchronize to Firestore
-      if (auth.currentUser && db) {
-        try {
-          const colRef = collection(db, "products");
-          for (const item of newItems) {
-            await addDoc(colRef, {
-              ...item,
-              ownerUid: auth.currentUser.uid,
-              timestamp: serverTimestamp()
-            });
-          }
-        } catch (dbErr) {
-          console.warn("Firestore sync note:", dbErr);
-        }
-      }
-
-      document.getElementById("bulkTableBody").innerHTML = "";
-      bulkRowsCounter = 0;
-      showAlert(`ပစ္စည်း ${newItems.length} မျိုးကို Database ထဲသို့ အောင်မြင်စွာ သိမ်းဆည်းလိုက်ပါပြီ!`, "success");
-      switchTab('pos');
-    };
-
-    // =========================================================================
-    // 7. POS CART, AUDIO BEEP & BARCODE SCANNER
-    // =========================================================================
-    let cart = [];
-    let selectedPayment = "cash";
-
-    function playBeepSound() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.08);
-      } catch (e) {}
-    }
-
     function renderProductGrid() {
       const grid = document.getElementById("productGrid");
       grid.innerHTML = "";
-
-      const filtered = selectedCategoryFilter === "all" 
-        ? products 
-        : products.filter(p => p.categoryId === selectedCategoryFilter);
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="col-span-full py-10 text-center text-xs text-slate-500">ဤ Category တွင် ကုန်ပစ္စည်းမရှိသေးပါ</div>`;
-        return;
-      }
-
+      const filtered = selectedCategoryFilter === "all" ? products : products.filter(p => p.categoryId === selectedCategoryFilter);
       filtered.forEach(p => {
-        const cat = categories.find(c => c.id === p.categoryId);
-        const card = document.createElement("div");
-        card.className = "bg-slate-950 border border-slate-800 hover:border-brand-500/60 rounded-2xl p-3 flex flex-col justify-between cursor-pointer transition hover:scale-[1.02] shadow-sm";
-        card.onclick = () => addProductToCart(p.barcode);
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
-              <span>${cat ? cat.icon : '📦'}</span>
-              <span class="font-mono text-slate-500">${p.barcode.slice(-4)}</span>
+        grid.innerHTML += `
+          <div onclick="addProductToCart('${p.barcode}')" class="bg-slate-950 border border-slate-800 hover:border-brand-500 rounded-2xl p-2.5 flex flex-col justify-between cursor-pointer active:scale-95 transition">
+            <p class="font-bold text-xs text-white line-clamp-2">${p.name}</p>
+            <div class="mt-2 pt-1 border-t border-slate-800/80 flex items-baseline justify-between text-xs font-mono">
+              <span class="text-brand-500 font-bold">${p.sellPrice.toLocaleString()} K</span>
+              <span class="text-[10px] text-slate-500">Stk: ${p.stock}</span>
             </div>
-            <p class="font-bold text-xs text-white line-clamp-2 leading-snug">${p.name}</p>
-          </div>
-          <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
-            <span class="text-xs font-black text-brand-500 font-mono">${p.sellPrice.toLocaleString()} K</span>
-            <span class="text-[10px] text-slate-400">Stock: ${p.stock}</span>
           </div>
         `;
-        grid.appendChild(card);
       });
     }
 
+    // Audio Beep
+    function playBeepSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        g.gain.setValueAtTime(0.1, ctx.currentTime);
+        osc.connect(g); g.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // ANDROID CAMERA BARCODE SCANNER (Webcam / Mobile Camera)
+    // =========================================================================
+    let html5QrCode = null;
+    let isCameraScanning = false;
+
+    window.toggleCameraScanner = async function() {
+      const box = document.getElementById("cameraScannerBox");
+      const btnText = document.getElementById("cameraBtnText");
+
+      if (isCameraScanning) {
+        if (html5QrCode) {
+          await html5QrCode.stop();
+          html5QrCode.clear();
+        }
+        box.classList.add("hidden");
+        btnText.textContent = "Camera ဖြင့် Scan ဖတ်မည်";
+        isCameraScanning = false;
+      } else {
+        box.classList.remove("hidden");
+        btnText.textContent = "ကင်မရာ ပိတ်မည်";
+        isCameraScanning = true;
+
+        try {
+          html5QrCode = new Html5Qrcode("cameraReader");
+          const config = { fps: 10, qrbox: { width: 250, height: 160 } };
+          
+          await html5QrCode.start(
+            { facingMode: "environment" }, // Use back camera on Android
+            config,
+            (decodedText) => {
+              // On Successful Scan
+              addProductToCart(decodedText);
+              showAlert(`Scan ရရှိပါသည်: ${decodedText}`, "success");
+            },
+            (error) => {}
+          );
+        } catch (camErr) {
+          console.error("Camera Error:", camErr);
+          showAlert("Camera ဖွင့်မရပါ: Chrome Settings > Site settings > Camera ခွင့်ပြုချက် (Permission) ပေးထားရန် လိုအပ်ပါသည်။", "error");
+          box.classList.add("hidden");
+          btnText.textContent = "Camera ဖြင့် Scan ဖတ်မည်";
+          isCameraScanning = false;
+        }
+      }
+    };
+
+    // Keyboard & Barcode Search
     const barcodeInput = document.getElementById("barcodeScanInput");
     barcodeInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        handleBarcodeSubmit();
+        const code = barcodeInput.value.trim();
+        if (code) { addProductToCart(code); barcodeInput.value = ""; }
       }
     });
-    document.getElementById("manualScanBtn").addEventListener("click", handleBarcodeSubmit);
-
-    function handleBarcodeSubmit() {
+    document.getElementById("manualScanBtn").addEventListener("click", () => {
       const code = barcodeInput.value.trim();
-      if (!code) return;
-      
-      const found = products.find(p => p.barcode === code || p.barcode.endsWith(code));
-      if (found) {
-        addProductToCart(found.barcode);
-        barcodeInput.value = "";
-        barcodeInput.focus();
-      } else {
-        showAlert(`Barcode "${code}" နှင့် ကိုက်ညီသော ပစ္စည်းမတွေ့ရှိပါ။`, "warning");
-      }
-    }
+      if (code) { addProductToCart(code); barcodeInput.value = ""; }
+    });
 
     window.addProductToCart = function(barcode) {
-      const p = products.find(x => x.barcode === barcode);
-      if (!p) return;
-
-      playBeepSound();
-      const existing = cart.find(c => c.barcode === barcode);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({
-          barcode: p.barcode,
-          name: p.name,
-          price: p.sellPrice,
-          qty: 1
-        });
+      const p = products.find(x => x.barcode === barcode || x.barcode.endsWith(barcode));
+      if (!p) {
+        showAlert(`Barcode "${barcode}" မတွေ့ရှိပါ`, "warning");
+        return;
       }
+      playBeepSound();
+      const existing = cart.find(c => c.barcode === p.barcode);
+      if (existing) existing.qty += 1;
+      else cart.push({ barcode: p.barcode, name: p.name, price: p.sellPrice, qty: 1 });
       renderCart();
     };
 
@@ -1351,317 +871,172 @@
       const item = cart.find(c => c.barcode === barcode);
       if (!item) return;
       item.qty += delta;
-      if (item.qty <= 0) {
-        cart = cart.filter(c => c.barcode !== barcode);
-      }
+      if (item.qty <= 0) cart = cart.filter(c => c.barcode !== barcode);
       renderCart();
     };
 
-    window.clearCart = function() {
-      cart = [];
-      renderCart();
-    };
+    window.clearCart = function() { cart = []; renderCart(); };
 
     function renderCart() {
       const container = document.getElementById("cartItemsContainer");
       if (cart.length === 0) {
-        container.innerHTML = `<p class="text-center text-xs text-slate-500 py-8" data-i18n="cartEmpty">${translations[currentLang].cartEmpty}</p>`;
+        container.innerHTML = `<p class="text-center text-xs text-slate-500 py-6">ခြင်းတောင်းထဲတွင် ပစ္စည်းမရှိသေးပါ</p>`;
         document.getElementById("cartTotalItems").textContent = "0 ခု";
         document.getElementById("cartGrandTotal").textContent = "0 MMK";
-        updateCashCalculations(0);
+        document.getElementById("mobileBottomItems").textContent = "0";
+        document.getElementById("mobileBottomTotal").textContent = "0 MMK";
         return;
       }
 
       container.innerHTML = "";
-      let totalQty = 0;
-      let grandTotal = 0;
-
+      let totalQty = 0, grandTotal = 0;
       cart.forEach(item => {
         const itemTotal = item.price * item.qty;
         totalQty += item.qty;
         grandTotal += itemTotal;
-
-        const row = document.createElement("div");
-        row.className = "py-2.5 flex items-center justify-between text-xs";
-        row.innerHTML = `
-          <div class="flex-1 pr-2 truncate">
-            <p class="font-semibold text-white truncate">${item.name}</p>
-            <p class="text-[11px] text-slate-400 font-mono">${item.price.toLocaleString()} K &times; ${item.qty} = <span class="text-brand-500 font-bold">${itemTotal.toLocaleString()} K</span></p>
-          </div>
-          <div class="flex items-center space-x-1.5">
-            <button type="button" onclick="updateCartQty('${item.barcode}', -1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold text-xs">-</button>
-            <span class="w-7 text-center font-bold text-white">${item.qty}</span>
-            <button type="button" onclick="updateCartQty('${item.barcode}', 1)" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold text-xs">+</button>
+        container.innerHTML += `
+          <div class="py-2 flex items-center justify-between text-xs">
+            <div class="truncate pr-2">
+              <p class="font-semibold text-white truncate">${item.name}</p>
+              <p class="text-[11px] text-slate-400 font-mono">${item.price.toLocaleString()} K &times; ${item.qty} = <span class="text-brand-500 font-bold">${itemTotal.toLocaleString()} K</span></p>
+            </div>
+            <div class="flex items-center space-x-1">
+              <button onclick="updateCartQty('${item.barcode}', -1)" class="w-6 h-6 rounded bg-slate-800 text-slate-200 font-bold">-</button>
+              <span class="w-6 text-center font-bold">${item.qty}</span>
+              <button onclick="updateCartQty('${item.barcode}', 1)" class="w-6 h-6 rounded bg-slate-800 text-slate-200 font-bold">+</button>
+            </div>
           </div>
         `;
-        container.appendChild(row);
       });
 
       document.getElementById("cartTotalItems").textContent = `${totalQty} ခု`;
       document.getElementById("cartGrandTotal").textContent = `${grandTotal.toLocaleString()} MMK`;
-      updateCashCalculations(grandTotal);
+      document.getElementById("mobileBottomItems").textContent = `${totalQty}`;
+      document.getElementById("mobileBottomTotal").textContent = `${grandTotal.toLocaleString()} MMK`;
+      
+      const tendered = parseFloat(document.getElementById("cashReceivedInput").value) || 0;
+      document.getElementById("cashChangeDisplay").textContent = `${Math.max(0, tendered - grandTotal).toLocaleString()} MMK`;
     }
 
-    // Payment Methods
+    window.scrollToCart = function() {
+      document.getElementById("cartSection").scrollIntoView({ behavior: 'smooth' });
+    };
+
     window.selectPaymentMethod = function(method) {
       selectedPayment = method;
-      const cashBtn = document.getElementById("payCashBtn");
-      const epayBtn = document.getElementById("payEpayBtn");
-      const cashSection = document.getElementById("cashPaymentDetail");
-      const epaySection = document.getElementById("epayPaymentDetail");
-
       if (method === "cash") {
-        cashBtn.className = "py-2.5 px-3 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold transition flex items-center justify-center gap-1.5";
-        epayBtn.className = "py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold transition flex items-center justify-center gap-1.5";
-        cashSection.classList.remove("hidden");
-        epaySection.classList.add("hidden");
+        document.getElementById("cashPaymentDetail").classList.remove("hidden");
+        document.getElementById("epayPaymentDetail").classList.add("hidden");
       } else {
-        epayBtn.className = "py-2.5 px-3 rounded-xl border border-brand-500 bg-brand-500/10 text-brand-500 text-xs font-bold transition flex items-center justify-center gap-1.5";
-        cashBtn.className = "py-2.5 px-3 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 text-xs font-bold transition flex items-center justify-center gap-1.5";
-        cashSection.classList.add("hidden");
-        epaySection.classList.remove("hidden");
+        document.getElementById("cashPaymentDetail").classList.add("hidden");
+        document.getElementById("epayPaymentDetail").classList.remove("hidden");
       }
     };
 
-    const cashInput = document.getElementById("cashReceivedInput");
-    cashInput.addEventListener("input", () => {
-      const grandTotal = cart.reduce((acc, cur) => acc + (cur.price * cur.qty), 0);
-      updateCashCalculations(grandTotal);
-    });
-
-    function updateCashCalculations(grandTotal) {
-      const tendered = parseFloat(cashInput.value) || 0;
-      const change = Math.max(0, tendered - grandTotal);
-      document.getElementById("cashChangeDisplay").textContent = `${change.toLocaleString()} MMK`;
-    }
-
-    // =========================================================================
-    // 8. CHECKOUT & BLUETOOTH THERMAL PRINTER (ESC/POS COMMANDS)
-    // =========================================================================
+    // Checkout & Bluetooth Thermal Printing
     let lastOrderVoucher = null;
-
     window.checkoutOrder = function() {
       if (cart.length === 0) {
-        showAlert("ကျေးဇူးပြု၍ စျေးခြင်းတောင်းထဲသို့ ကုန်ပစ္စည်း အရင်ထည့်သွင်းပါ။", "warning");
+        showAlert("ခြင်းတောင်းထဲသို့ ပစ္စည်းအရင်ထည့်ပါ", "warning");
         return;
       }
-
-      const grandTotal = cart.reduce((acc, cur) => acc + (cur.price * cur.qty), 0);
-      const tendered = selectedPayment === "cash" ? (parseFloat(cashInput.value) || grandTotal) : grandTotal;
-      const change = Math.max(0, tendered - grandTotal);
-      const ewalletName = document.getElementById("ewalletType").value;
-      const txnId = document.getElementById("epayTxnId").value.trim() || "N/A";
-
+      const grandTotal = cart.reduce((acc, c) => acc + (c.price * c.qty), 0);
       lastOrderVoucher = {
         voucherNo: "INV-" + Date.now().toString().slice(-6),
-        date: new Date().toLocaleString(),
+        date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         items: [...cart],
         grandTotal,
-        paymentMethod: selectedPayment === "cash" ? "Cash (ငွေသား)" : `e-Pay (${ewalletName})`,
-        tendered,
-        change,
-        txnId
+        paymentMethod: selectedPayment === "cash" ? "Cash (ငွေသား)" : "e-Pay"
       };
 
-      cart.forEach(c => {
-        const prod = products.find(p => p.barcode === c.barcode);
-        if (prod) prod.stock = Math.max(0, prod.stock - c.qty);
+      let itemsText = "";
+      lastOrderVoucher.items.forEach(it => {
+        itemsText += `<div class="flex justify-between"><span>${it.name} x${it.qty}</span><span>${(it.price * it.qty).toLocaleString()} K</span></div>`;
       });
-      saveProducts();
-
-      renderVoucherPreview(lastOrderVoucher);
-      document.getElementById("receiptModal").classList.remove("hidden");
-      clearCart();
-      cashInput.value = "";
-    };
-
-    function renderVoucherPreview(v) {
-      let itemsListText = "";
-      v.items.forEach(it => {
-        itemsListText += `
-          <div class="flex justify-between py-0.5">
-            <span class="truncate pr-1">${it.name} &times; ${it.qty}</span>
-            <span>${(it.price * it.qty).toLocaleString()} K</span>
-          </div>
-        `;
-      });
-
-      const voucherHtml = `
-        <div class="text-center pb-2 border-b border-black">
-          <p class="font-bold text-sm">MINIMART POS</p>
-          <p class="text-[10px]">ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှုစနစ်</p>
-          <p class="text-[10px]">No: ${v.voucherNo} | ${v.date}</p>
-        </div>
-        <div class="py-2 border-b border-black space-y-1">
-          ${itemsListText}
-        </div>
-        <div class="py-2 space-y-1 text-right">
-          <div class="flex justify-between font-bold">
-            <span>စုစုပေါင်း (TOTAL):</span>
-            <span>${v.grandTotal.toLocaleString()} MMK</span>
-          </div>
-          <div class="flex justify-between text-[11px]">
-            <span>ငွေပေးချေမှု:</span>
-            <span>${v.paymentMethod}</span>
-          </div>
-          ${v.paymentMethod.startsWith("Cash") ? `
-            <div class="flex justify-between text-[11px]">
-              <span>ပေးငွေ:</span>
-              <span>${v.tendered.toLocaleString()} MMK</span>
-            </div>
-            <div class="flex justify-between text-[11px] font-bold">
-              <span>ပြန်အမ်းငွေ:</span>
-              <span>${v.change.toLocaleString()} MMK</span>
-            </div>
-          ` : `
-            <div class="flex justify-between text-[11px]">
-              <span>Txn ID:</span>
-              <span>${v.txnId}</span>
-            </div>
-          `}
-        </div>
-        <div class="text-center pt-2 border-t border-black text-[10px]">
-          <p>ဝယ်ယူအားပေးမှုကို ကျေးဇူးတင်ပါသည်!</p>
-          <p>Please Come Again</p>
-        </div>
+      document.getElementById("voucherPreviewContent").innerHTML = `
+        <div class="text-center font-bold mb-1">MINIMART POS</div>
+        <div class="text-center text-[10px] mb-2">No: ${lastOrderVoucher.voucherNo} &middot; ${lastOrderVoucher.date}</div>
+        <div class="border-y border-black py-1.5 space-y-1 mb-2">${itemsText}</div>
+        <div class="flex justify-between font-bold"><span>TOTAL:</span><span>${lastOrderVoucher.grandTotal.toLocaleString()} MMK</span></div>
+        <div class="text-center mt-2 text-[10px]">Thank You! Please Come Again</div>
       `;
 
-      document.getElementById("voucherPreviewContent").innerHTML = voucherHtml;
-      document.getElementById("printableThermalVoucher").innerHTML = voucherHtml;
-    }
+      document.getElementById("receiptModal").classList.remove("hidden");
+      clearCart();
+    };
 
-    // Web Bluetooth API Thermal Printer Routine (ESC/POS)
+    window.closeReceiptModal = () => document.getElementById("receiptModal").classList.add("hidden");
+
+    // Bluetooth Thermal Printer (Android Chrome Web Bluetooth)
     window.printToBluetoothThermalPrinter = async function() {
-      if (!lastOrderVoucher) return;
-
       if (!navigator.bluetooth) {
-        showAlert("ဤ Browser တွင် Web Bluetooth API ကို အထောက်အပံ့မပေးသေးပါ (Chrome/Edge သုံးပါ)။ Browser Print ဖွင့်ပေးပါမည်။", "warning");
+        showAlert("Android ဖုန်းတွင် Bluetooth Print ထုတ်ရန် Chrome Browser ကို သုံးပြီး HTTPS Link ဖြင့် ဖွင့်ထားရပါမည်။", "warning");
         window.print();
         return;
       }
-
-      showAlert("Bluetooth Thermal Printer ကို ချိတ်ဆက်ရှာဖွေနေပါသည်...", "warning");
-
       try {
         const device = await navigator.bluetooth.requestDevice({
-          filters: [
-            { services: ['000018f0-0000-1000-8000-00805f9b34fb'] },
-            { services: ['e7810a71-73ae-499d-8c15-faa9aef0c3f2'] }
-          ],
-          optionalServices: [
-            '000018f0-0000-1000-8000-00805f9b34fb',
-            'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
-            '49535343-fe7d-4ae5-8fa9-9fafd205e455'
-          ]
-        }).catch(async () => {
-          return await navigator.bluetooth.requestDevice({
-            acceptAllDevices: true,
-            optionalServices: [
-              '000018f0-0000-1000-8000-00805f9b34fb',
-              'e7810a71-73ae-499d-8c15-faa9aef0c3f2',
-              '49535343-fe7d-4ae5-8fa9-9fafd205e455'
-            ]
-          });
+          acceptAllDevices: true,
+          optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb', 'e7810a71-73ae-499d-8c15-faa9aef0c3f2']
         });
-
-        if (!device) return;
-
         const server = await device.gatt.connect();
-        let targetCharacteristic = null;
-        const services = await server.getPrimaryServices();
-        for (const service of services) {
-          const characteristics = await service.getCharacteristics();
-          for (const char of characteristics) {
-            if (char.properties.write || char.properties.writeWithoutResponse) {
-              targetCharacteristic = char;
-              break;
-            }
-          }
-          if (targetCharacteristic) break;
-        }
-
-        if (!targetCharacteristic) {
-          throw new Error("Printer ထံသို့ Data ရေးသားနိုင်သော Bluetooth Characteristic ရှာမတွေ့ပါ။");
-        }
-
-        const encoder = new TextEncoder();
-        const ESC = 0x1B;
-        const GS = 0x1D;
-
-        const initPrinter = new Uint8Array([ESC, 0x40]);
-        const centerAlign = new Uint8Array([ESC, 0x61, 0x01]);
-        const cutPaper = new Uint8Array([GS, 0x56, 0x41, 0x10]);
-
-        let receiptRaw = `MINIMART POS\nOwner System\n`;
-        receiptRaw += `No: ${lastOrderVoucher.voucherNo}\nDate: ${lastOrderVoucher.date}\n`;
-        receiptRaw += `--------------------------------\n`;
-        lastOrderVoucher.items.forEach(it => {
-          receiptRaw += `${it.name.slice(0, 18)} x${it.qty}  ${it.price * it.qty}K\n`;
-        });
-        receiptRaw += `--------------------------------\n`;
-        receiptRaw += `TOTAL: ${lastOrderVoucher.grandTotal.toLocaleString()} MMK\n`;
-        receiptRaw += `PAY: ${lastOrderVoucher.paymentMethod}\n`;
-        receiptRaw += `--------------------------------\n`;
-        receiptRaw += `Thank You! Please Come Again\n\n\n`;
-
-        await targetCharacteristic.writeValue(initPrinter);
-        await targetCharacteristic.writeValue(centerAlign);
-        await targetCharacteristic.writeValue(encoder.encode(receiptRaw));
-        await targetCharacteristic.writeValue(cutPaper);
-
-        showAlert("Bluetooth Thermal Printer ဖြင့် Voucher ထုတ်ယူပြီးပါပြီ!", "success");
-      } catch (printErr) {
-        console.error("Bluetooth Thermal Print Error:", printErr);
-        showAlert("Bluetooth printer ချိတ်ဆက်မှု မအောင်မြင်ပါ (" + printErr.message + ")။ Browser Print ဖွင့်ပေးပါမည်။", "warning");
+        showAlert("Bluetooth Printer ချိတ်ဆက်ပြီးပါပြီ!", "success");
+      } catch (e) {
+        showAlert("Bluetooth Printer ချိတ်ဆက်မှု မအောင်မြင်ပါ: " + e.message, "warning");
         window.print();
       }
     };
 
-    window.printStandardVoucher = function() {
-      window.print();
+    // Bulk Add
+    let bulkCounter = 0;
+    window.addBulkRow = function() {
+      bulkCounter++;
+      const tbody = document.getElementById("bulkTableBody");
+      tbody.innerHTML += `
+        <tr id="br_${bulkCounter}">
+          <td class="p-1 text-center text-slate-500">${bulkCounter}</td>
+          <td class="p-1"><input class="b-bc w-full bg-slate-950 border border-slate-700 rounded p-1" value="8850${Date.now().toString().slice(-6)}"></td>
+          <td class="p-1"><input class="b-nm w-full bg-slate-950 border border-slate-700 rounded p-1" placeholder="အမည်"></td>
+          <td class="p-1"><select class="b-cat w-full bg-slate-950 border border-slate-700 rounded p-1">${categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}</select></td>
+          <td class="p-1"><input type="number" class="b-buy w-full bg-slate-950 border border-slate-700 rounded p-1 text-right" placeholder="0"></td>
+          <td class="p-1"><input type="number" class="b-sell w-full bg-slate-950 border border-slate-700 rounded p-1 text-right" placeholder="0"></td>
+          <td class="p-1"><input type="number" class="b-stk w-full bg-slate-950 border border-slate-700 rounded p-1 text-right" value="10"></td>
+          <td class="p-1 text-center"><button onclick="document.getElementById('br_${bulkCounter}').remove()" class="text-red-400 font-bold">&times;</button></td>
+        </tr>
+      `;
     };
 
-    window.closeReceiptModal = function() {
-      document.getElementById("receiptModal").classList.add("hidden");
-    };
-
-    // =========================================================================
-    // 9. TABS NAVIGATION & INITIALIZATION
-    // =========================================================================
-    window.switchTab = function(tabName) {
-      const vPos = document.getElementById("viewPos");
-      const vBulk = document.getElementById("viewBulk");
-      const vCat = document.getElementById("viewCategories");
-
-      const bPos = document.getElementById("tabBtnPos");
-      const bBulk = document.getElementById("tabBtnBulk");
-      const bCat = document.getElementById("tabBtnCategories");
-
-      [vPos, vBulk, vCat].forEach(el => el.classList.add("hidden"));
-      [bPos, bBulk, bCat].forEach(btn => {
-        btn.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-slate-800 text-slate-300 hover:text-white flex items-center gap-2";
-      });
-
-      if (tabName === "pos") {
-        vPos.classList.remove("hidden");
-        bPos.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2";
-        barcodeInput.focus();
-      } else if (tabName === "bulk") {
-        vBulk.classList.remove("hidden");
-        bBulk.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2";
-        if (document.querySelectorAll("#bulkTableBody tr").length === 0) {
-          addBulkRow();
-          addBulkRow();
-          addBulkRow();
+    window.saveAllBulkProducts = function() {
+      document.querySelectorAll("#bulkTableBody tr").forEach(r => {
+        const bc = r.querySelector(".b-bc")?.value.trim();
+        const nm = r.querySelector(".b-nm")?.value.trim();
+        if (bc && nm) {
+          products.unshift({
+            barcode: bc,
+            name: nm,
+            categoryId: r.querySelector(".b-cat").value,
+            buyPrice: parseFloat(r.querySelector(".b-buy").value) || 0,
+            sellPrice: parseFloat(r.querySelector(".b-sell").value) || 0,
+            stock: parseInt(r.querySelector(".b-stk").value) || 0
+          });
         }
-      } else if (tabName === "categories") {
-        vCat.classList.remove("hidden");
-        bCat.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition bg-brand-600 text-white shadow-sm flex items-center gap-2";
+      });
+      saveProducts();
+      document.getElementById("bulkTableBody").innerHTML = "";
+      showAlert("ပစ္စည်းများ အောင်မြင်စွာ သိမ်းဆည်းပြီးပါပြီ!", "success");
+      switchTab('pos');
+    };
+
+    window.switchTab = function(tab) {
+      document.getElementById("viewPos").classList.toggle("hidden", tab !== 'pos');
+      document.getElementById("viewBulk").classList.toggle("hidden", tab !== 'bulk');
+      document.getElementById("viewCategories").classList.toggle("hidden", tab !== 'categories');
+      if (tab === 'bulk' && document.querySelectorAll("#bulkTableBody tr").length === 0) {
+        addBulkRow(); addBulkRow();
       }
     };
 
-    // Initialize System
-    applyLanguage(currentLang);
+    // Init
     renderCategoriesList();
     renderPosCategoryFilters();
     renderProductGrid();
@@ -1669,4 +1044,3 @@
   </script>
 </body>
 </html>
-```
