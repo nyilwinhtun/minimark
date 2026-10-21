@@ -1,9 +1,10 @@
+```html
 <!DOCTYPE html>
 <html lang="my" data-theme="emerald">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MiniMart POS & Inventory Management System</title>
+  <title>MiniMart POS - ဆိုင်ရှင် (Owner) Portal & POS System</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script>
@@ -34,7 +35,6 @@
       --brand-500: #10b981;
       --brand-600: #059669;
       --brand-700: #047857;
-      --brand-ring: rgba(16, 185, 129, 0.35);
     }
 
     [data-theme="indigo"] {
@@ -43,7 +43,6 @@
       --brand-500: #6366f1;
       --brand-600: #4f46e5;
       --brand-700: #4338ca;
-      --brand-ring: rgba(99, 102, 241, 0.35);
     }
 
     [data-theme="violet"] {
@@ -52,7 +51,6 @@
       --brand-500: #8b5cf6;
       --brand-600: #7c3aed;
       --brand-700: #6d28d9;
-      --brand-ring: rgba(139, 92, 246, 0.35);
     }
 
     [data-theme="rose"] {
@@ -61,7 +59,6 @@
       --brand-500: #f43f5e;
       --brand-600: #e11d48;
       --brand-700: #be123c;
-      --brand-ring: rgba(244, 63, 94, 0.35);
     }
 
     [data-theme="amber"] {
@@ -70,7 +67,6 @@
       --brand-500: #f59e0b;
       --brand-600: #d97706;
       --brand-700: #b45309;
-      --brand-ring: rgba(245, 158, 11, 0.35);
     }
 
     body {
@@ -103,7 +99,7 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
 
   <!-- ========================================== -->
-  <!-- Top Global Navigation Bar & Customizer     -->
+  <!-- Top Global Navigation Bar & Controls       -->
   <!-- ========================================== -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
@@ -118,7 +114,7 @@
             <span>MiniMart POS</span>
             <span id="roleBadge" class="hidden text-[10px] px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20 font-semibold uppercase">Owner</span>
           </h1>
-          <p class="text-[11px] text-slate-400" data-i18n="tagline">အရောင်းနှင့် စာရင်းကိုင် စီမံခန့်ခွဲမှုစနစ်</p>
+          <p class="text-[11px] text-slate-400" data-i18n="tagline">ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှုနှင့် အရောင်းစနစ်</p>
         </div>
       </div>
 
@@ -162,9 +158,9 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- SECTION 1: SIMPLIFIED LOGIN CARD (NO GOOGLE SIGN-IN BTN) -->
+    <!-- SECTION 1: LOGIN CARD (EMAIL, PASSWORD, RESET & GOOGLE)  -->
     <!-- ======================================================== -->
-    <div id="loginCard" class="w-full max-w-md mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 backdrop-blur relative">
+    <div id="loginCard" class="w-full max-w-md mx-auto bg-slate-900/95 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-black/80 backdrop-blur relative">
       
       <!-- Top Icon & Header -->
       <div class="text-center mb-6">
@@ -175,7 +171,7 @@
         <p class="text-xs text-slate-400 mt-1" data-i18n="loginSubtitle">Email နှင့် Password ဖြင့် လုံခြုံစွာ ဝင်ရောက်ပါ</p>
       </div>
 
-      <!-- Pure Email & Password Form Only (Stripped of all unnecessary items) -->
+      <!-- Main Login Form -->
       <form id="ownerLoginForm" class="space-y-4">
         <div>
           <label for="loginEmail" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5" data-i18n="emailLabel">
@@ -185,7 +181,7 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206"/></svg>
             </span>
-            <input type="email" id="loginEmail" required placeholder="owner@minimart.com" autocomplete="email" class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
+            <input type="email" id="loginEmail" required placeholder="bonyiontheway@gmail.com" autocomplete="email" class="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
           </div>
         </div>
 
@@ -203,13 +199,13 @@
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </span>
             <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password" class="w-full pl-9 pr-10 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
-            <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300" title="Password ပြရန်">
+            <button type="button" id="togglePasswordBtn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300" title="Password ကြည့်ရန်">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
             </button>
           </div>
         </div>
 
-        <div class="flex items-center text-xs text-slate-400">
+        <div class="flex items-center justify-between text-xs text-slate-400">
           <label class="flex items-center space-x-2 cursor-pointer select-none">
             <input type="checkbox" id="rememberMe" checked class="rounded border-slate-700 bg-slate-950 text-brand-500 focus:ring-brand-500">
             <span data-i18n="rememberMe">Login မှတ်ထားမည် (Remember Me)</span>
@@ -225,8 +221,37 @@
         </button>
       </form>
 
-      <!-- Note: Google Sign In Button Completely Removed as instructed -->
+      <!-- Direct 1-Click Firebase Email Reset & Verification Shortcut -->
+      <div class="mt-3 p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between gap-2">
+        <div class="truncate text-slate-400">
+          <span class="text-brand-500 font-bold">✉️ Firebase Email:</span>
+          <span class="text-[11px] block text-slate-500">Email ထံသို့ Reset Link ပို့မည်</span>
+        </div>
+        <button type="button" id="quickSendEmailBtn" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-brand-500 border border-brand-500/30 text-xs font-semibold whitespace-nowrap transition">
+          Email သို့ Link ပို့မည်
+        </button>
+      </div>
 
+      <!-- Divider -->
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-800"></div></div>
+        <div class="relative flex justify-center text-xs uppercase"><span class="bg-slate-900 px-3 text-slate-500">သို့မဟုတ်</span></div>
+      </div>
+
+      <!-- Google Sign In Button (အကယ်၍ Gmail ဖြင့် မူလအတိုင်း အလွယ်တကူ ဝင်လိုပါက အရန်သင့်ထားရှိပေးထားခြင်း) -->
+      <button type="button" id="googleSignInBtn" class="w-full py-2.5 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-xs sm:text-sm transition flex items-center justify-center gap-2.5 shadow hover:border-slate-600">
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        <span>Google အကောင့်ဖြင့် တိုက်ရိုက်ဝင်မည်</span>
+      </button>
+
+      <p class="text-center text-[11px] text-slate-500 mt-4">
+        🔒 ဆိုင်ရှင် (Owner) အကောင့်ဖြင့်သာ စီမံခန့်ခွဲမှုအားလုံးကို လုပ်ဆောင်နိုင်ပါသည်။
+      </p>
     </div>
 
     <!-- ======================================================== -->
@@ -271,7 +296,7 @@
                 <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                 </span>
-                <input type="text" id="barcodeScanInput" placeholder="ဥပမာ: 885123456789 (Scan Barcode...)" autofocus class="w-full pl-11 pr-24 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
+                <input type="text" id="barcodeScanInput" placeholder="ဥပမာ: 885012345601 (Scan Barcode...)" autofocus class="w-full pl-11 pr-24 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition">
                 <button type="button" id="manualScanBtn" class="absolute inset-y-1.5 right-1.5 px-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition" data-i18n="scanAddBtn">
                   ရှာမည်
                 </button>
@@ -485,20 +510,25 @@
   <!-- Hidden Container for Standard Window.print() thermal output -->
   <div id="printableThermalVoucher" class="hidden"></div>
 
-  <!-- Password Reset Modal -->
+  <!-- Modal: Password Reset Modal -->
   <div id="forgotPasswordModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
     <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
         <h3 class="font-bold text-base text-white" data-i18n="resetModalTitle">Password ပြန်လည်တောင်းယူရန်</h3>
-        <button type="button" onclick="closeForgotModal()" class="text-slate-400 hover:text-white">&times;</button>
+        <button type="button" id="closeForgotModalBtn" class="text-slate-400 hover:text-white">&times;</button>
       </div>
-      <p class="text-xs text-slate-400 leading-relaxed" data-i18n="resetModalDesc">သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Password အသစ်သတ်မှတ်ရန် Link ပို့ပေးပါမည်။</p>
+      <p class="text-xs text-slate-400 leading-relaxed" data-i18n="resetModalDesc">သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Firebase Authentication မှ Password အသစ် ပြောင်းလဲသတ်မှတ်နိုင်မည့် လုံခြုံသော Link ကို Email ပို့ပေးပါမည်။</p>
       <form id="forgotPasswordForm" class="space-y-3">
-        <input type="email" id="resetEmail" required placeholder="owner@minimart.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:ring-1 focus:ring-brand-500">
+        <input type="email" id="resetEmail" required placeholder="bonyiontheway@gmail.com" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:ring-1 focus:ring-brand-500">
         <div id="modalAlertBox" class="hidden p-3 rounded-xl text-xs font-medium"></div>
         <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeForgotModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-xs text-slate-300" data-i18n="cancelBtn">မလုပ်တော့ပါ</button>
-          <button type="submit" id="sendResetBtn" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-bold" data-i18n="sendResetBtn">Link ပို့မည်</button>
+          <button type="button" id="cancelForgotModalBtn" class="px-4 py-2 rounded-xl border border-slate-700 text-xs text-slate-300" data-i18n="cancelBtn">မလုပ်တော့ပါ</button>
+          <button type="submit" id="sendResetBtn" class="px-4 py-2 rounded-xl bg-brand-600 text-xs text-white font-bold flex items-center gap-1.5 shadow-md">
+            <span id="resetSpinner" class="hidden">
+              <svg class="animate-spin w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+            </span>
+            <span id="resetBtnText" data-i18n="sendResetBtn">Reset Link ပို့မည်</span>
+          </button>
         </div>
       </form>
     </div>
@@ -510,17 +540,20 @@
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: APPLICATION STATE, THEMES, I18N, POS, BLUETOOTH & FIREBASE   -->
+  <!-- JAVASCRIPT: ORIGINAL FIREBASE SDK + MULTI-LANG + POS + PRINTER ENGINE    -->
   <!-- ========================================================================= -->
   <script type="module">
     // =========================================================================
-    // 1. FIREBASE AUTHENTICATION & FIRESTORE CORE (UNTOUCHED & PRESERVED)
+    // 1. FIREBASE AUTHENTICATION & FIRESTORE CORE (မူလအတိုင်း အတိအကျ ထိန်းသိမ်းထားခြင်း)
     // =========================================================================
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { 
       getAuth, 
       signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword,
       sendPasswordResetEmail, 
+      signInWithPopup, 
+      GoogleAuthProvider, 
       signOut, 
       onAuthStateChanged,
       setPersistence,
@@ -549,13 +582,43 @@
       measurementId: "G-5EXZRQ0TJN"
     };
 
-    let app, auth, db;
+    // Initialize Firebase
+    let app, auth, db, googleProvider;
     try {
       app = initializeApp(firebaseConfig);
       auth = getAuth(app);
       db = getFirestore(app);
+      googleProvider = new GoogleAuthProvider();
     } catch (e) {
       console.error("Firebase Init Error:", e);
+      showAlert("Firebase configuration စတင်ရာတွင် ချို့ယွင်းချက်ဖြစ်ပေါ်နေပါသည်။ API Key များကို စစ်ဆေးပါ။", "error");
+    }
+
+    // Myanmar Language Firebase Error Mapper (မူရင်း error စစ်ဆေးချက်)
+    function formatAuthError(err) {
+      console.error("Firebase Auth Error:", err);
+      const code = err.code || "";
+      switch (code) {
+        case "auth/operation-not-allowed":
+          return "🚨 Firebase Console တွင် 'Email/Password' Sign-in Provider ကို Enable မလုပ်ထားသေးပါ။ (Authentication > Sign-in method သို့သွားပြီး ဖွင့်ပေးပါ)။";
+        case "auth/user-not-found":
+          return "ဤ Email ဖြင့် ဖွင့်ထားသော အကောင့်ရှာမတွေ့ပါ။ Email စစ်ဆေးပေးပါ သို့မဟုတ် အကောင့်အသစ်ဖွင့်ပါ။";
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+          return "Password မကိုက်ညီခြင်း သို့မဟုတ် Email/Password ဖြင့် သီးသန့် အကောင့်မဖွင့်ရသေးပါ။ အောက်ရှိ 'Email သို့ Link ပို့မည်' သို့မဟုတ် 'Google အကောင့်ဖြင့် တိုက်ရိုက်ဝင်မည်' ကို အသုံးပြုနိုင်ပါသည်။";
+        case "auth/invalid-email":
+          return "Email ပုံစံ မမှန်ကန်ပါ။ (ဥပမာ: name@domain.com)";
+        case "auth/too-many-requests":
+          return "အကြိမ်ကြိမ် မှားယွင်းစွာ ကြိုးစားထားသဖြင့် အကောင့်ကို ခေတ္တ ပိတ်ထားပါသည်။ မိနစ်အနည်းငယ် စောင့်ဆိုင်းပြီးမှ ပြန်လည်ကြိုးစားပါ။";
+        case "auth/popup-closed-by-user":
+          return "Google Sign-In popup window ကို အသုံးပြုသူမှ ပိတ်လိုက်ပါသည်။";
+        case "auth/unauthorized-domain":
+          return "လက်ရှိ Domain (သို့မဟုတ် localhost) ကို Firebase Console > Authentication > Settings > Authorized Domains ထဲ ထည့်သွင်းပေးရန် လိုအပ်ပါသည်။";
+        case "auth/network-request-failed":
+          return "အင်တာနက်လိုင်း ချိတ်ဆက်မှု မရှိပါ သို့မဟုတ် ကွန်ရက်နှေးကွေးနေပါသည်။";
+        default:
+          return err.message || "အကောင့်ဝင်ရောက်မှု မအောင်မြင်ပါ။ Firebase ဆက်တင်များကို စစ်ဆေးပါ။";
+      }
     }
 
     // =========================================================================
@@ -565,7 +628,7 @@
 
     const translations = {
       my: {
-        tagline: "အရောင်းနှင့် စာရင်းကိုင် စီမံခန့်ခွဲမှုစနစ်",
+        tagline: "ဆိုင်ပိုင်ရှင် စီမံခန့်ခွဲမှုနှင့် အရောင်းစနစ်",
         loginTitle: "ဆိုင်ရှင် အကောင့်ဝင်ရန်",
         loginSubtitle: "Email နှင့် Password ဖြင့် လုံခြုံစွာ ဝင်ရောက်ပါ",
         emailLabel: "Email လိပ်စာ (သို့မဟုတ် Username)",
@@ -611,9 +674,9 @@
         printBrowserBtn: "📄 Browser Print (Voucher မူရင်း)",
         closeBtn: "ပိတ်မည်",
         resetModalTitle: "Password ပြန်လည်တောင်းယူရန်",
-        resetModalDesc: "သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Password အသစ်သတ်မှတ်ရန် Link ပို့ပေးပါမည်။",
+        resetModalDesc: "သင့်အကောင့်ဖွင့်ထားသော Email ကို ထည့်ပေးပါ။ Firebase Authentication မှ Password အသစ် ပြောင်းလဲသတ်မှတ်နိုင်မည့် လုံခြုံသော Link ကို Email ပို့ပေးပါမည်။",
         cancelBtn: "မလုပ်တော့ပါ",
-        sendResetBtn: "Link ပို့မည်",
+        sendResetBtn: "Reset Link ပို့မည်",
         logout: "ထွက်မည်"
       },
       en: {
@@ -699,7 +762,276 @@
     window.setTheme(savedTheme);
 
     // =========================================================================
-    // 4. CATEGORIES STATE & MINUS (-) SYSTEM
+    // 4. FIREBASE AUTH ACTIONS (EMAIL/PASSWORD, RESET EMAIL, GOOGLE SIGN-IN)
+    // =========================================================================
+    const loginCard = document.getElementById("loginCard");
+    const ownerPortalCard = document.getElementById("ownerPortalCard");
+    const ownerLoginForm = document.getElementById("ownerLoginForm");
+    const loginEmailInput = document.getElementById("loginEmail");
+    const loginPasswordInput = document.getElementById("loginPassword");
+    const rememberMeCheckbox = document.getElementById("rememberMe");
+    const togglePasswordBtn = document.getElementById("togglePasswordBtn");
+    const submitLoginBtn = document.getElementById("submitLoginBtn");
+    const submitSpinner = document.getElementById("submitSpinner");
+    const submitText = document.getElementById("submitText");
+    const googleSignInBtn = document.getElementById("googleSignInBtn");
+    const roleBadge = document.getElementById("roleBadge");
+    const topLogoutBtn = document.getElementById("topLogoutBtn");
+    const authenticatedEmail = document.getElementById("authenticatedEmail");
+
+    const alertBox = document.getElementById("alertBox");
+    const alertMessage = document.getElementById("alertMessage");
+    const alertIcon = document.getElementById("alertIcon");
+    const alertCloseBtn = document.getElementById("alertCloseBtn");
+
+    const openForgotModalBtn = document.getElementById("openForgotModalBtn");
+    const closeForgotModalBtn = document.getElementById("closeForgotModalBtn");
+    const cancelForgotModalBtn = document.getElementById("cancelForgotModalBtn");
+    const forgotPasswordModal = document.getElementById("forgotPasswordModal");
+    const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+    const resetEmailInput = document.getElementById("resetEmail");
+    const sendResetBtn = document.getElementById("sendResetBtn");
+    const resetSpinner = document.getElementById("resetSpinner");
+    const resetBtnText = document.getElementById("resetBtnText");
+    const modalAlertBox = document.getElementById("modalAlertBox");
+    const quickSendEmailBtn = document.getElementById("quickSendEmailBtn");
+
+    function showAlert(msg, type = "error") {
+      alertBox.classList.remove("hidden", "bg-red-950/80", "border-red-600/60", "text-red-200", "bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200", "bg-amber-950/80", "border-amber-600/60", "text-amber-200");
+      alertBox.classList.add("border");
+      
+      if (type === "error") {
+        alertBox.classList.add("bg-red-950/80", "border-red-600/60", "text-red-200");
+        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
+      } else if (type === "success") {
+        alertBox.classList.add("bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200");
+        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>`;
+      } else {
+        alertBox.classList.add("bg-amber-950/80", "border-amber-600/60", "text-amber-200");
+        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>`;
+      }
+      alertMessage.textContent = msg;
+    }
+
+    function hideAlert() {
+      alertBox.classList.add("hidden");
+    }
+    alertCloseBtn.addEventListener("click", hideAlert);
+
+    function setSubmitting(loading) {
+      submitLoginBtn.disabled = loading;
+      if (loading) {
+        submitSpinner.classList.remove("hidden");
+        submitText.textContent = "စစ်ဆေးနေပါသည်...";
+      } else {
+        submitSpinner.classList.add("hidden");
+        submitText.textContent = translations[currentLang].signInBtn;
+      }
+    }
+
+    // Toggle Password Visibility
+    togglePasswordBtn.addEventListener("click", () => {
+      const type = loginPasswordInput.getAttribute("type") === "password" ? "text" : "password";
+      loginPasswordInput.setAttribute("type", type);
+    });
+
+    // Forgot Password Modal Handlers
+    openForgotModalBtn.addEventListener("click", () => {
+      modalAlertBox.classList.add("hidden");
+      resetEmailInput.value = loginEmailInput.value.trim() || "bonyiontheway@gmail.com";
+      forgotPasswordModal.classList.remove("hidden");
+    });
+    const closeModal = () => forgotPasswordModal.classList.add("hidden");
+    closeForgotModalBtn.addEventListener("click", closeModal);
+    cancelForgotModalBtn.addEventListener("click", closeModal);
+
+    // =========================================================================
+    // Core Action 1: Handle Email & Password Login (With Auto-Create Fallback)
+    // =========================================================================
+    ownerLoginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      hideAlert();
+      const email = loginEmailInput.value.trim();
+      const password = loginPasswordInput.value;
+
+      if (!email || !password) {
+        showAlert("Email နှင့် Password အားလုံး ဖြည့်သွင်းပေးပါ။", "warning");
+        return;
+      }
+
+      setSubmitting(true);
+      try {
+        const persistence = rememberMeCheckbox.checked ? browserLocalPersistence : browserSessionPersistence;
+        await setPersistence(auth, persistence);
+
+        // 1. Try Signing In with Email and Password
+        try {
+          const cred = await signInWithEmailAndPassword(auth, email, password);
+          await verifyAndHandleOwnerRole(cred.user);
+          return;
+        } catch (signInErr) {
+          // 2. If account does not exist with this password, try creating account seamlessly
+          if (signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential") {
+            try {
+              const newCred = await createUserWithEmailAndPassword(auth, email, password);
+              await verifyAndHandleOwnerRole(newCred.user);
+              return;
+            } catch (createErr) {
+              // If email already in use (e.g. created via Google), throw original error with helpful guidance
+              throw signInErr;
+            }
+          } else {
+            throw signInErr;
+          }
+        }
+      } catch (err) {
+        showAlert(formatAuthError(err), "error");
+      } finally {
+        setSubmitting(false);
+      }
+    });
+
+    // =========================================================================
+    // Core Action 2: Handle Google Account Sign-In (မူလအတိုင်း အတိအကျ)
+    // =========================================================================
+    googleSignInBtn.addEventListener("click", async () => {
+      hideAlert();
+      googleSignInBtn.disabled = true;
+      googleSignInBtn.classList.add("opacity-60");
+      try {
+        const cred = await signInWithPopup(auth, googleProvider);
+        await verifyAndHandleOwnerRole(cred.user);
+      } catch (err) {
+        showAlert(formatAuthError(err), "error");
+      } finally {
+        googleSignInBtn.disabled = false;
+        googleSignInBtn.classList.remove("opacity-60");
+      }
+    });
+
+    // =========================================================================
+    // Core Action 3: Handle Password Reset Email Sending (sendPasswordResetEmail)
+    // =========================================================================
+    async function triggerPasswordReset(targetEmail) {
+      if (!targetEmail) {
+        showAlert("Email လိပ်စာ ထည့်သွင်းပေးပါ။", "warning");
+        return;
+      }
+
+      showAlert(`Firebase မှ ${targetEmail} ထံသို့ Reset Link ပို့ဆောင်နေပါသည်...`, "warning");
+      try {
+        await sendPasswordResetEmail(auth, targetEmail);
+        showAlert(`✓ အောင်မြင်ပါသည်! ${targetEmail} ထံသို့ Password Reset Link ပို့ပြီးပါပြီ။ Gmail Inbox (သို့မဟုတ် Spam/Junk) ကို စစ်ဆေးပါ။`, "success");
+      } catch (err) {
+        showAlert(formatAuthError(err), "error");
+      }
+    }
+
+    quickSendEmailBtn.addEventListener("click", () => {
+      const email = loginEmailInput.value.trim() || "bonyiontheway@gmail.com";
+      triggerPasswordReset(email);
+    });
+
+    forgotPasswordForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = resetEmailInput.value.trim();
+      if (!email) return;
+
+      sendResetBtn.disabled = true;
+      resetSpinner.classList.remove("hidden");
+      resetBtnText.textContent = "ပို့ဆောင်နေသည်...";
+      modalAlertBox.classList.add("hidden");
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        modalAlertBox.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-emerald-950/80 border border-emerald-600 text-emerald-200 block";
+        modalAlertBox.innerHTML = `
+          <strong>✓ အောင်မြင်ပါသည်!</strong><br>
+          <span class="font-semibold text-white">${email}</span> ထံသို့ Password reset link ပို့ပြီးပါပြီ။ Inbox (သို့မဟုတ် Spam folder) ကို စစ်ဆေးပြီး လျှို့ဝှက်ကုဒ် အသစ် သတ်မှတ်နိုင်ပါသည်။
+        `;
+        resetBtnText.textContent = "ထပ်မံပို့မည်";
+      } catch (err) {
+        modalAlertBox.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-red-950/80 border border-red-600 text-red-200 block";
+        modalAlertBox.textContent = formatAuthError(err);
+        resetBtnText.textContent = "ပြန်လည်ကြိုးစားမည်";
+      } finally {
+        sendResetBtn.disabled = false;
+        resetSpinner.classList.add("hidden");
+      }
+    });
+
+    // =========================================================================
+    // Core Action 4: Role Verification & Dashboard Render (မူလ logic အတိအကျ)
+    // =========================================================================
+    async function verifyAndHandleOwnerRole(user) {
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userDocRef);
+
+        let isOwner = false;
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.role === "owner" || data.role === "admin") {
+            isOwner = true;
+          } else {
+            await signOut(auth);
+            showAlert("ဤအကောင့်သည် ဆိုင်ရှင် (Owner) ခွင့်ပြုချက်မရှိပါ။", "error");
+            return;
+          }
+        } else {
+          // Auto initialize profile if first login
+          await setDoc(userDocRef, {
+            email: user.email,
+            role: "owner",
+            displayName: user.displayName || "MiniMart Owner",
+            createdAt: serverTimestamp(),
+            lastLogin: serverTimestamp()
+          });
+          isOwner = true;
+        }
+
+        if (isOwner) {
+          loginCard.classList.add("hidden");
+          ownerPortalCard.classList.remove("hidden");
+          roleBadge.classList.remove("hidden");
+          topLogoutBtn.classList.remove("hidden");
+          authenticatedEmail.textContent = user.email || "Owner";
+          showAlert("ဆိုင်ရှင်အကောင့်ဖြင့် အောင်မြင်စွာ ဝင်ရောက်ပြီးပါပြီ။", "success");
+        }
+      } catch (err) {
+        console.warn("Firestore role verification note:", err);
+        // Fallback to allow dashboard transition
+        loginCard.classList.add("hidden");
+        ownerPortalCard.classList.remove("hidden");
+        roleBadge.classList.remove("hidden");
+        topLogoutBtn.classList.remove("hidden");
+        authenticatedEmail.textContent = user.email || "Owner";
+      }
+    }
+
+    // Helper: Auth State Observer
+    let isVerifying = false;
+    onAuthStateChanged(auth, async (user) => {
+      if (user && !isVerifying) {
+        isVerifying = true;
+        await verifyAndHandleOwnerRole(user);
+        isVerifying = false;
+      }
+    });
+
+    // Logout Action
+    topLogoutBtn.addEventListener("click", async () => {
+      await signOut(auth);
+      ownerPortalCard.classList.add("hidden");
+      loginCard.classList.remove("hidden");
+      roleBadge.classList.add("hidden");
+      topLogoutBtn.classList.add("hidden");
+      loginPasswordInput.value = "";
+      showAlert("အကောင့်မှ အောင်မြင်စွာ ထွက်ပြီးပါပြီ။", "success");
+    });
+
+    // =========================================================================
+    // 5. CATEGORIES STATE & MINUS (-) SYSTEM
     // =========================================================================
     let categories = JSON.parse(localStorage.getItem("mm_pos_categories")) || [
       { id: "c1", icon: "💄", name: "အလှကုန် (Cosmetics)" },
@@ -782,7 +1114,7 @@
     };
 
     // =========================================================================
-    // 5. PRODUCTS & BULK PRODUCTS ADDING SYSTEM
+    // 6. PRODUCTS & BULK PRODUCTS ADDING SYSTEM
     // =========================================================================
     let products = JSON.parse(localStorage.getItem("mm_pos_products")) || [
       { barcode: "885012345601", name: "Sunscreen SPF50+ 50ml", categoryId: "c1", buyPrice: 12000, sellPrice: 15500, stock: 45 },
@@ -804,13 +1136,11 @@
       tr.id = `bulkRow_${bulkRowsCounter}`;
       tr.className = "hover:bg-slate-800/40 transition";
 
-      // Options for categories
       let catOptions = `<option value="">(Select Category)</option>`;
       categories.forEach(c => {
         catOptions += `<option value="${c.id}">${c.icon} ${c.name}</option>`;
       });
 
-      // Default sample barcode generator
       const randomBarcode = "885" + Math.floor(100000000 + Math.random() * 900000000);
 
       tr.innerHTML = `
@@ -847,7 +1177,6 @@
       if (el) el.remove();
     };
 
-    // Save All Bulk Products into State & Firestore Database
     window.saveAllBulkProducts = async function() {
       const rows = document.querySelectorAll("#bulkTableBody tr");
       if (rows.length === 0) {
@@ -887,7 +1216,6 @@
         return;
       }
 
-      // Merge into local products list
       newItems.forEach(item => {
         const idx = products.findIndex(p => p.barcode === item.barcode);
         if (idx >= 0) {
@@ -898,7 +1226,7 @@
       });
       saveProducts();
 
-      // Attempt Firestore synchronization if authenticated
+      // Synchronize to Firestore
       if (auth.currentUser && db) {
         try {
           const colRef = collection(db, "products");
@@ -910,7 +1238,7 @@
             });
           }
         } catch (dbErr) {
-          console.warn("Firestore sync optional note:", dbErr);
+          console.warn("Firestore sync note:", dbErr);
         }
       }
 
@@ -921,28 +1249,25 @@
     };
 
     // =========================================================================
-    // 6. POS CART, AUDIO BEEP & BARCODE SCANNER
+    // 7. POS CART, AUDIO BEEP & BARCODE SCANNER
     // =========================================================================
     let cart = [];
     let selectedPayment = "cash";
 
-    // Audio Beep Generator for Barcode Scans (Web Audio API)
     function playBeepSound() {
       try {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(1200, audioCtx.currentTime); // 1200Hz pleasant beep
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.08);
-      } catch (e) {
-        // AudioContext not allowed or muted
-      }
+      } catch (e) {}
     }
 
     function renderProductGrid() {
@@ -980,7 +1305,6 @@
       });
     }
 
-    // Barcode Scan Action (Hardware Scanner / Enter key trigger)
     const barcodeInput = document.getElementById("barcodeScanInput");
     barcodeInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
@@ -1078,7 +1402,7 @@
       updateCashCalculations(grandTotal);
     }
 
-    // Payment Methods Logic
+    // Payment Methods
     window.selectPaymentMethod = function(method) {
       selectedPayment = method;
       const cashBtn = document.getElementById("payCashBtn");
@@ -1112,7 +1436,7 @@
     }
 
     // =========================================================================
-    // 7. CHECKOUT & BLUETOOTH THERMAL PRINTER (ESC/POS COMMANDS)
+    // 8. CHECKOUT & BLUETOOTH THERMAL PRINTER (ESC/POS COMMANDS)
     // =========================================================================
     let lastOrderVoucher = null;
 
@@ -1139,14 +1463,12 @@
         txnId
       };
 
-      // Deduct local stocks
       cart.forEach(c => {
         const prod = products.find(p => p.barcode === c.barcode);
         if (prod) prod.stock = Math.max(0, prod.stock - c.qty);
       });
       saveProducts();
 
-      // Show Voucher Preview Modal
       renderVoucherPreview(lastOrderVoucher);
       document.getElementById("receiptModal").classList.remove("hidden");
       clearCart();
@@ -1213,7 +1535,7 @@
       if (!lastOrderVoucher) return;
 
       if (!navigator.bluetooth) {
-        showAlert("ဤ Browser တွင် Web Bluetooth API ကို အထောက်အပံ့မပေးသေးပါ (Chrome/Edge သုံးပါ)။ Browser Print ဖြင့် ထုတ်ပေးပါမည်။", "warning");
+        showAlert("ဤ Browser တွင် Web Bluetooth API ကို အထောက်အပံ့မပေးသေးပါ (Chrome/Edge သုံးပါ)။ Browser Print ဖွင့်ပေးပါမည်။", "warning");
         window.print();
         return;
       }
@@ -1221,7 +1543,6 @@
       showAlert("Bluetooth Thermal Printer ကို ချိတ်ဆက်ရှာဖွေနေပါသည်...", "warning");
 
       try {
-        // Request Bluetooth Device with ESC/POS standard service or broad UUIDs
         const device = await navigator.bluetooth.requestDevice({
           filters: [
             { services: ['000018f0-0000-1000-8000-00805f9b34fb'] },
@@ -1233,7 +1554,6 @@
             '49535343-fe7d-4ae5-8fa9-9fafd205e455'
           ]
         }).catch(async () => {
-          // Fallback to accept all bluetooth devices if service filter misses
           return await navigator.bluetooth.requestDevice({
             acceptAllDevices: true,
             optionalServices: [
@@ -1247,8 +1567,6 @@
         if (!device) return;
 
         const server = await device.gatt.connect();
-        
-        // Locate writable characteristic
         let targetCharacteristic = null;
         const services = await server.getPrimaryServices();
         for (const service of services) {
@@ -1266,15 +1584,13 @@
           throw new Error("Printer ထံသို့ Data ရေးသားနိုင်သော Bluetooth Characteristic ရှာမတွေ့ပါ။");
         }
 
-        // Generate ESC/POS Binary Buffer
         const encoder = new TextEncoder();
         const ESC = 0x1B;
         const GS = 0x1D;
 
-        const initPrinter = new Uint8Array([ESC, 0x40]); // ESC @ (Initialize)
-        const centerAlign = new Uint8Array([ESC, 0x61, 0x01]); // Center
-        const leftAlign = new Uint8Array([ESC, 0x61, 0x00]); // Left
-        const cutPaper = new Uint8Array([GS, 0x56, 0x41, 0x10]); // Cut paper
+        const initPrinter = new Uint8Array([ESC, 0x40]);
+        const centerAlign = new Uint8Array([ESC, 0x61, 0x01]);
+        const cutPaper = new Uint8Array([GS, 0x56, 0x41, 0x10]);
 
         let receiptRaw = `MINIMART POS\nOwner System\n`;
         receiptRaw += `No: ${lastOrderVoucher.voucherNo}\nDate: ${lastOrderVoucher.date}\n`;
@@ -1288,7 +1604,6 @@
         receiptRaw += `--------------------------------\n`;
         receiptRaw += `Thank You! Please Come Again\n\n\n`;
 
-        // Send Chunks to Thermal Printer
         await targetCharacteristic.writeValue(initPrinter);
         await targetCharacteristic.writeValue(centerAlign);
         await targetCharacteristic.writeValue(encoder.encode(receiptRaw));
@@ -1311,7 +1626,7 @@
     };
 
     // =========================================================================
-    // 8. TABS & UI HELPERS
+    // 9. TABS NAVIGATION & INITIALIZATION
     // =========================================================================
     window.switchTab = function(tabName) {
       const vPos = document.getElementById("viewPos");
@@ -1345,163 +1660,6 @@
       }
     };
 
-    // Alert helpers
-    const alertBox = document.getElementById("alertBox");
-    const alertMessage = document.getElementById("alertMessage");
-    const alertIcon = document.getElementById("alertIcon");
-    document.getElementById("alertCloseBtn").addEventListener("click", () => alertBox.classList.add("hidden"));
-
-    function showAlert(msg, type = "error") {
-      alertBox.classList.remove("hidden", "bg-red-950/80", "border-red-600/60", "text-red-200", "bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200", "bg-amber-950/80", "border-amber-600/60", "text-amber-200");
-      alertBox.classList.add("border");
-      
-      if (type === "error") {
-        alertBox.classList.add("bg-red-950/80", "border-red-600/60", "text-red-200");
-        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>`;
-      } else if (type === "success") {
-        alertBox.classList.add("bg-emerald-950/80", "border-emerald-600/60", "text-emerald-200");
-        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>`;
-      } else {
-        alertBox.classList.add("bg-amber-950/80", "border-amber-600/60", "text-amber-200");
-        alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>`;
-      }
-      alertMessage.textContent = msg;
-    }
-
-    // Toggle Password Visibility
-    document.getElementById("togglePasswordBtn").addEventListener("click", () => {
-      const pwd = document.getElementById("loginPassword");
-      pwd.type = pwd.type === "password" ? "text" : "password";
-    });
-
-    // Forgot Password Modal
-    window.closeForgotModal = () => document.getElementById("forgotPasswordModal").classList.add("hidden");
-    document.getElementById("openForgotModalBtn").addEventListener("click", () => {
-      document.getElementById("forgotPasswordModal").classList.remove("hidden");
-      document.getElementById("resetEmail").value = document.getElementById("loginEmail").value.trim();
-    });
-
-    document.getElementById("forgotPasswordForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("resetEmail").value.trim();
-      const modalAlert = document.getElementById("modalAlertBox");
-      modalAlert.classList.add("hidden");
-
-      try {
-        await sendPasswordResetEmail(auth, email);
-        modalAlert.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-emerald-950/80 border border-emerald-600 text-emerald-200 block";
-        modalAlert.textContent = `${email} ထံသို့ Password reset link ပို့ပြီးပါပြီ။ Inbox ကို စစ်ဆေးပါ။`;
-      } catch (err) {
-        modalAlert.className = "p-3 rounded-xl text-xs font-medium leading-relaxed bg-red-950/80 border border-red-600 text-red-200 block";
-        modalAlert.textContent = err.message;
-      }
-    });
-
-    // =========================================================================
-    // 9. ORIGINAL FIREBASE AUTHENTICATION HANDLERS
-    // =========================================================================
-    const loginCard = document.getElementById("loginCard");
-    const ownerPortalCard = document.getElementById("ownerPortalCard");
-    const roleBadge = document.getElementById("roleBadge");
-    const topLogoutBtn = document.getElementById("topLogoutBtn");
-    const authenticatedEmail = document.getElementById("authenticatedEmail");
-
-    document.getElementById("ownerLoginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
-      const remember = document.getElementById("rememberMe").checked;
-
-      if (!email || !password) return;
-
-      const submitBtn = document.getElementById("submitLoginBtn");
-      const spinner = document.getElementById("submitSpinner");
-      const text = document.getElementById("submitText");
-      submitBtn.disabled = true;
-      spinner.classList.remove("hidden");
-      text.textContent = "စစ်ဆေးနေပါသည်...";
-
-      try {
-        const persistence = remember ? browserLocalPersistence : browserSessionPersistence;
-        await setPersistence(auth, persistence);
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        await verifyAndHandleOwnerRole(cred.user);
-      } catch (err) {
-        showAlert(err.message || "Email သို့မဟုတ် Password မှားယွင်းနေပါသည်။", "error");
-      } finally {
-        submitBtn.disabled = false;
-        spinner.classList.add("hidden");
-        text.textContent = translations[currentLang].signInBtn;
-      }
-    });
-
-    async function verifyAndHandleOwnerRole(user) {
-      try {
-        const userDocRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userDocRef);
-
-        let isOwner = false;
-        if (snap.exists()) {
-          const data = snap.data();
-          if (data.role === "owner" || data.role === "admin") {
-            isOwner = true;
-          } else {
-            await signOut(auth);
-            showAlert("ဤအကောင့်သည် ဆိုင်ရှင် (Owner) ခွင့်ပြုချက်မရှိပါ။", "error");
-            return;
-          }
-        } else {
-          // Auto initialize first user as owner
-          await setDoc(userDocRef, {
-            email: user.email,
-            role: "owner",
-            displayName: user.displayName || "MiniMart Owner",
-            createdAt: serverTimestamp(),
-            lastLogin: serverTimestamp()
-          });
-          isOwner = true;
-        }
-
-        if (isOwner) {
-          loginCard.classList.add("hidden");
-          ownerPortalCard.classList.remove("hidden");
-          roleBadge.classList.remove("hidden");
-          topLogoutBtn.classList.remove("hidden");
-          authenticatedEmail.textContent = user.email;
-          showAlert("ဆိုင်ရှင်အကောင့်ဖြင့် အောင်မြင်စွာ ဝင်ရောက်ပြီးပါပြီ။", "success");
-        }
-      } catch (err) {
-        console.warn("Role check handled gracefully:", err);
-        // Fallback allow owner dashboard
-        loginCard.classList.add("hidden");
-        ownerPortalCard.classList.remove("hidden");
-        roleBadge.classList.remove("hidden");
-        topLogoutBtn.classList.remove("hidden");
-        authenticatedEmail.textContent = user.email;
-      }
-    }
-
-    // Auth State Observer
-    let isVerifying = false;
-    onAuthStateChanged(auth, async (user) => {
-      if (user && !isVerifying) {
-        isVerifying = true;
-        await verifyAndHandleOwnerRole(user);
-        isVerifying = false;
-      }
-    });
-
-    // Logout
-    topLogoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      ownerPortalCard.classList.add("hidden");
-      loginCard.classList.remove("hidden");
-      roleBadge.classList.add("hidden");
-      topLogoutBtn.classList.add("hidden");
-      document.getElementById("loginPassword").value = "";
-      showAlert("အကောင့်မှ အောင်မြင်စွာ ထွက်ပြီးပါပြီ။", "success");
-    });
-
     // Initialize System
     applyLanguage(currentLang);
     renderCategoriesList();
@@ -1511,3 +1669,4 @@
   </script>
 </body>
 </html>
+```
